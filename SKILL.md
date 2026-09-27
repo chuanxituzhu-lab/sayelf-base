@@ -36,6 +36,7 @@ metadata:
 - 需要设计评测集、评分器、验收标准或出口门；
 - 需要判断一项交付是否属于 FDE 场景、Echo 与 Delta 如何分工；
 - 项目结项前的资产沉淀、知识转移与退出标准检查；
+- 需要提高 Codex、代码代理或其它大模型的提示/上下文缓存命中率；
 - 审查既有 Skill / Agent 是否符合标准（用本文件当 checklist）。
 
 不适用：纯业务咨询与调研、无工程产出的文档写作、纯远程标准化 SaaS 配置（见 §5 适用边界）。
@@ -188,6 +189,16 @@ python tests/eval_scorer.py --self-test
 python tests/eval_scorer.py --cases tests/golden-cases.json --outputs <outputs.json>
 ```
 
+### §7 提高缓存命中率（详见 `references/cache-hit-principles.md`）
+
+- **稳定前缀优先**：把稳定的底座指令、Skill、项目规范、工具定义和可复用参考放在前面；把任务描述、时间戳、请求 ID、当前 diff、日志和用户专属数据放到后缀。
+- **前缀必须可重复渲染**：保持字节、消息顺序、工具名称/描述/Schema、模型、服务层、结构化输出、推理强度和 verbosity 稳定；不要为每轮请求重写共享指令。
+- **Codex/代码代理**：把 `AGENTS.md`、Skill 和稳定编码约定视为共享前缀；追加对话和工具结果，不反复重排历史；当前分支、工作区 diff、时间和临时日志只进入动态后缀。普通 Codex 客户端不能强制缓存命中，只能通过稳定上下文提高命中概率。
+- **OpenAI API**：按模型能力选择隐式或显式 breakpoint；GPT-5.6+ 可使用 `prompt_cache_options`、显式 `prompt_cache_breakpoint` 和 `prewarm`，旧模型按官方支持使用稳定 `prompt_cache_key`/retention；用 `usage.input_tokens_details.cached_tokens` 和诊断结果验证，不能把同一会话等同于命中。
+- **其它模型/代码框架**：先适配能力矩阵（breakpoint、cache key、retention、usage、diagnostics）；没有显式缓存 API 时仍执行稳定前缀、动态后缀、追加历史、稳定工具 Schema 和租户分域这五项通用规则。
+- **安全与度量**：缓存键只含供应商、模型、租户/项目作用域和 Prompt 版本，不放原始用户数据；按 `cached_tokens / input_tokens`、P95 首 token 延迟、输入成本和 miss reason 评估，不用平均请求数掩盖低命中长前缀。
+- **执行检查**：先运行 `python scripts/cache_prefix.py --self-test`；需要检查请求布局时运行 `python scripts/cache_prefix.py --request <request.json>`。脚本只输出结构、告警和哈希，不回显敏感正文。
+
 ## AI Harness boundary
 
 - Harness（运行器 / Agent 循环 / 编排器）是**可替换适配器**，位于核心之外，fail-closed：不得静默扩大权限、工具访问、遥测、持久化或数据出网。
@@ -243,7 +254,9 @@ python tests/eval_scorer.py --cases tests/golden-cases.json --outputs <outputs.j
 | `references/fde-standard.md` | 走 FDE 10 步、做 Echo-Delta 分工、插件化封装、Harness 接入时 |
 | `references/eval-harness.md` | 设计评测集、评分器、分层指标时 |
 | `references/extended-cases-25.md` | 需要五阶段 25 条人工/裁判用例时 |
+| `references/cache-hit-principles.md` | 需要优化 Codex、代码代理或其它模型的上下文缓存命中时 |
 | `assets/templates/*.md` | 需要填写调研、勘查、方案、计划、验收、ROI、知识转移、资产清单模板时（01-08） |
+| `scripts/cache_prefix.py` | 需要对请求前缀、动态后缀、缓存键和命中率布局做本地确定性检查时 |
 | `tests/` | 需要跑规则轨评分或扩充用例时 |
 
 ## 溯源
