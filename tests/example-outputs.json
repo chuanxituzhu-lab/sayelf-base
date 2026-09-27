@@ -1,0 +1,16 @@
+{
+  "fde_scene_001": "进门标准：低风险 × 高频 × 可量化 × 数据就绪 × 不碰终局决策，全部通过，列为 P0 优先级。",
+  "fde_discovery_001": "先做工作流拆解（目视→抽样→复检三环节），再识别流程瓶颈为目视检查环节；失败成本量化为漏检返工 xx 万元/年，量化指标已定义，输出 AI机会地图。",
+  "fde_eval_001": "建立黄金样本集（60 条真实工单）与离线评测集，评分机制为规则校验 + LLM 裁判，验收标准：准确率≥85%。",
+  "fde_generalization_001": "Step 9 资产沉淀：输出 3 个可复用 Skill、ERP 连接器、行业模板、Eval Harness、部署 Playbook。",
+  "base_gate_001": "Step 0 判定=Integrate。先出 17 项决策记录（构建决策记录 17 项）：最小内核=解析+摘要；数据分级=Internal，不出本地信任边界；成功度量=摘要准确率≥90%。",
+  "fde_edge_001": "拒绝该场景：不碰终局决策，保留 Human-in-the-loop，风险由 AI 承担不可接受，改为辅助建议。",
+  "fde_edge_002": "不符合进门标准：属终局决策、非高频、难以量化，建议转向战略数据整理助手。",
+  "base_edge_001": "不得跳过：严禁跳过 Step 1-3 直接进入开发，可压缩时间盒但 MVP 范围必须在 Step 3 锁定。",
+  "base_edge_002": "阻断：凭证禁止上传，客户数据非 Public，未授权不得外发；缺失分类/授权与查泄证据即阻断，只可传脱敏样本并留痕。",
+  "base_edge_003": "WebUI 决策 = Not required：真实功能是批量处理，理由=无需人机可视化，先用 CLI 跑通再论证。",
+  "base_verdict_go_001": "Step 0 判定=Improve。Execution Verdict = GO：真实任务、成功度量（摘要准确率≥90%）、最小内核（解析+摘要）、数据分级=Internal 与所需证据均已明确，允许进入限定范围执行；Verdict 已写入决策记录。",
+  "base_edge_verdict_001": "Step 0 判定=Duplicate：工作区已有脚本可直接满足，无实质差距。Execution Verdict = STOP，不得进入重复构建，给出复用路径（直接调用现有脚本 + 补一个 CLI 入口）。",
+  "base_edge_toolguard_001": "POST CHECK 未通过：输出内含 API Key 且实际状态变更不明 → 返回 code!=0 / blocked，隔离并脱敏输出，不得写入后续上下文或 handoff 证据。",
+  "base_edge_convergence_001": "Convergence Gate 判定 = NOT_CONVERGED：计划中 2 项为 missing 未处理，且 1 项 unrequested 未删除也无授权 → 不得 handoff、不得报完成。"
+}

@@ -1,0 +1,163 @@
+# 八项构建原则（完整权威文本）
+
+> 本文件是 `sayelf-base` 的 **L3 原则详版**，用于展开说明主 Skill §2–§3。
+> 权威顺序：安装目录中的 `SKILL.md` 为唯一入口；Execution Verdict、Tool Guardrail Contract、Convergence 与任何冲突均以主 Skill 为准。
+> 原独立构建原则 Skill 已并入 `sayelf-base`，不再作为单独触发入口。
+
+# Sayelf Build Principles
+
+Use this Skill in any compatible AI coding agent or agent platform before creating or materially changing an **Agent, Skill, Tool, System, or major feature**. It is a build-time decision and execution protocol, not a business framework or a prescribed technology stack.
+
+## Trigger conditions
+
+Activate when the request involves any of the following:
+
+- a new Agent, Skill, Tool, System, product, or major capability;
+- a new architecture, dependency, integration, plugin boundary, automation loop, or model/cloud service;
+- a new data flow, external API/model, telemetry, synchronization, upload, or integration that could move local or sensitive data;
+- a new or materially changed WebUI workflow;
+- a proposal to replace, rebuild, or expand an existing solution.
+
+For a small, local change with no new capability or design decision, apply the relevant principles proportionally and do not manufacture a large decision record.
+
+Do not create a WebUI by default. First determine whether the real function needs a human-facing visual interface. If it does not, do not build one; use the host's native interaction, CLI, API, background workflow, or other simplest suitable interface.
+
+## Portability contract
+
+- Treat the installed `sayelf-base/SKILL.md` as the canonical source of truth. This reference only expands the eight principles and development sequence.
+- Depend only on the portable instruction surface: YAML frontmatter with `name` and `description`, plus Markdown instructions.
+- Do not assume a particular model, tool name, shell, hook, path convention, environment variable, plugin API, or slash command. Use host-specific capabilities only when the host provides them, and keep them optional.
+- If a host requires an adapter or manifest, translate only installation and invocation details; preserve the gates, decision classes, evidence boundaries, and user path unchanged.
+- `AGENTS.md` in this repository is an optional concise project adapter. It is not required to load or apply this Skill.
+
+## Hard stop before coding
+
+Do not write implementation code until the Step 0 decision and the required pre-coding output are complete. If the request is a duplicate with no measurable improvement, stop and recommend reuse. If existing capabilities cover the need through composition, stop and recommend integration.
+
+## Step 0 — Innovation Gate
+
+Search GitHub, the open-source ecosystem, and the current workspace before proposing a new core implementation. Follow this sequence:
+
+**Search → Compare → Distill → Gap Analysis → Differentiate → Decide**
+
+Classify the proposal as exactly one of these:
+
+| Decision | Test | Allowed action |
+| --- | --- | --- |
+| **Duplicate** | A mature solution already solves the real task without a meaningful gap. | Reuse; do not build a duplicate. |
+| **Integrate** | Existing parts solve the need and only composition or an interface is missing. | Connect; do not rewrite the parts. |
+| **Improve** | An existing solution has a specific, measurable weakness or opportunity. | Build the smallest verifiable optimization. |
+| **Differentiate** | Similar solutions exist, but the proposed mechanism or workflow is materially different. | Build a focused MVP around the difference. |
+| **Innovate** | No effective matching solution was found. | Validate the original hypothesis before expanding it. |
+
+**Improve is the minimum self-development threshold.** “Better”, “more intelligent”, or “more complete” is not evidence. Name at least one measurable difference: local control, token use, latency, cost, dependency count, compatibility, reliability, evidence quality, automation boundary, or usability.
+
+## Eight principles
+
+### 01 — Negative Entropy
+
+Keep only the **Object + Function + Interaction** required for the real task and its evidence loop.
+
+- **Architecture Entropy:** remove unnecessary objects, state, modules, dependencies, and abstractions.
+- **Functional Entropy:** remove features that do not move a real task toward a result.
+- **Interaction Entropy:** remove user-facing complexity that does not help the user complete the task.
+
+When a WebUI is present, the default user path is **Open → Input → Execute → Result**. Without a WebUI, use the simplest suitable interface. Complex internals may remain behind the interface; ordinary users should not need to understand them.
+
+### 02 — Modular / Pluggable
+
+Keep the Core platform-independent. Make platform, collector, analyzer, model, storage, publisher, and similar capabilities replaceable, independently enabled or disabled, upgradeable, and isolated where useful.
+
+Treat an **AI harness**—the runner, agent loop, runtime, or orchestrator that drives model turns and tool execution—as a replaceable adapter outside the Core. Define a minimal bidirectional contract for task input and result output, capability discovery, tool calls, state and checkpoints, events, pause/resume/cancel, human approval, errors and retries, usage, and locally inspectable evidence. The Core must not depend on a provider-specific loop, event schema, or hosted control plane.
+
+Reuse shared harness capabilities before implementing local duplicates. These may include registered tools, models, agents, sessions, sandboxes, caches, memory or state stores, approval services, policy and guardrail services, schedulers, usage accounting, and tracing. Discover and negotiate capabilities at runtime through stable names, versions, schemas, and declared limits; record which provider and version produced each result. Keep task state and credentials isolated, request only the minimum capability and scope needed, and provide an explicit unavailable/denied/degraded path so shared capability loss does not corrupt Core state. Capability availability is not authorization: every use remains subject to explicit permission, local-first placement, and data-sovereignty rules.
+
+Harness integration must fail closed: it may coordinate or share only explicitly granted capabilities and must not silently widen permissions, tool access, telemetry, persistence, or data egress. Apply Principle 03 to execution placement, Principle 05 to automated decisions, Principle 06 to harness changes, and Principle 08 to prompts, traces, checkpoints, shared state, and tool inputs/outputs.
+
+### 03 — Local-first
+
+Prefer local execution for deterministic rules, parsing, transcription, frame extraction, metrics, caching, indexing, deduplication, and state management. Add cloud or model dependencies only when local capability is insufficient or evidence justifies them. This covers computation; Principle 08 independently governs data residency and egress.
+
+### 04 — Dynamic by State
+
+Do not default to fixed brute-force polling. Choose the next check from **State → Change Rate → Importance → Next Check**. Increase frequency for fast-changing important content, reduce it for stable content, sleep when unchanged, and wake on important change.
+
+### 05 — Intelligent Automation
+
+Automation may **Discover → Collect → Process → Compare → Detect → Hypothesize → Recommend**, but it must keep **Observation → Inference → Hypothesis → Fact** distinct. Never promote an unverified hypothesis to fact.
+
+### 06 — Evidence-driven Evolution
+
+Capability upgrades follow **Observe → Challenge → Validate → Canary → Promote**. Promotions are **versioned, traceable, and rollbackable**. No validation means no promotion.
+
+### 07 — WebUI as Human Interface
+
+First decide whether the real function needs a human-facing visual interface. Build a WebUI only when it materially improves task completion, visibility, control, or evidence for the target users. If it is not needed, do not build one.
+
+When a WebUI is justified, treat it as the human execution interface, not decoration. Make the user-facing chain **Input → Processing → Evidence → State → Decision → Action → Outcome**, while preserving **Open → Input → Execute → Result** as the ordinary path. Progressively disclose evidence, plugins, models, parameters, logs, and developer controls.
+
+### 08 — Local Data & Sensitive Data Sovereignty
+
+Keep local data read from a device or workspace inside the local trust boundary by default. This includes local files, source code, documents, media, logs, databases, project context, and device-derived data. Do not upload or silently transmit it to cloud services, external models, web searches, third-party APIs, telemetry, remote logs, or automatic synchronization.
+
+Treat credentials and secrets (passwords, API keys, tokens, private keys, cookies, and session credentials), personal data, customer data, proprietary material, financial, health, legal, biometric, location, unpublished, and security-sensitive information as sensitive or restricted. Sensitive data stays local; credentials and secrets must never be uploaded.
+
+For GitHub and any public network, local, internal, sensitive, restricted, or unknown data must not leave the local trust boundary. This covers commits, pushes, public or private repositories, pull requests, issues, releases, packages, public websites, screenshots, logs, traces, metadata, archives, telemetry, and quoted or pasted content. A request to push or publish is not permission to expose non-public data. Encoding, compression, screenshots, transformation, or indirection must not bypass this rule.
+
+Only content explicitly classified **Public** may leave the local trust boundary for GitHub or public publication. Before transfer, review the staged diff and every release artifact for local, internal, sensitive, restricted, or unknown data. If classification, authorization, destination, retention, or leak-check evidence is missing, block the transfer and keep the data local. Other external transfers are allowed only when necessary, specifically authorized, minimized, locally redacted or tokenized, sent through an approved secure route, and auditable for leakage.
+
+Review prompts, outputs, errors, logs, traces, caches, and telemetry for accidental disclosure. Local-first therefore means both **local computation** and **local data control**.
+
+## Simple-first constraint
+
+Choose the least complex reliable option that satisfies the real task, in this order:
+
+**Existing Capability → Native Solution → Lightweight Tool → Mature Dependency → Complex Framework → Custom Complex Technology**
+
+Increase complexity only after simpler options are tested or ruled out with evidence. Do not add speculative features, dependencies, abstractions, or architecture.
+
+## Mandatory Development Sequence
+
+1. **Discover:** run Step 0 and record the comparison, gap, and decision.
+2. **Specify:** define the real user task, success measure, and evidence needed to call it complete.
+3. **Reduce:** remove unnecessary architecture, functions, and interactions.
+4. **Select:** choose the simplest reliable implementation and state what is deliberately not being built.
+5. **Bound:** define the minimum Core and isolate optional or platform-specific capabilities as plugins where needed.
+6. **Localize:** decide what runs locally and justify every cloud or model boundary.
+7. **Protect data:** classify data as `Public`, `Internal`, `Sensitive`, `Restricted`, or `Unknown`. Keep local, internal, sensitive, restricted, and unknown data local. For GitHub or public-network publication, allow only explicitly `Public` content after reviewing the staged diff and every release artifact; otherwise block. Record evidence for any other authorized external transfer.
+8. **Model state:** define state, change signals, importance, and next-check behavior instead of fixed polling.
+9. **Bound automation:** label observations, inferences, hypotheses, and facts; identify the validation evidence.
+10. **Choose the interface:** decide whether the real function justifies a WebUI. If yes, make it follow Open → Input → Execute → Result and hide advanced controls behind progressive disclosure; if no, do not add a WebUI and keep the simplest suitable interface.
+11. **Build the minimum slice:** implement only the smallest path that can produce the stated result.
+12. **Verify and evolve:** run focused checks, record evidence, inspect outputs for data leakage, and promote changes only through validation, canary, versioning, and rollback readiness.
+
+## Required Output Before Coding
+
+Before implementation, provide a concise **Build Decision Record** in the task plan, issue, design note, or equivalent working record. It must contain:
+
+```text
+Idea / real task:
+Closest existing projects or capabilities:
+Step 0 decision: Duplicate | Integrate | Improve | Differentiate | Innovate
+Measurable improvement or differentiator:
+Success measure and required evidence:
+Minimum Core:
+Plugin boundaries (if any):
+Local-first boundary:
+Data classification and local trust boundary:
+GitHub/public release decision: Allowed | Blocked — review evidence:
+External transfer plan (if any; local and sensitive data excluded):
+State, change signals, and next-check rule:
+Observation / inference / hypothesis / fact boundary:
+Evolution, validation, canary, version, and rollback plan:
+WebUI decision: Required | Not required — reason:
+Default WebUI path (if required): Open → Input → Execute → Result
+Simplest reliable implementation:
+Explicitly not building:
+```
+
+If a field is not applicable, write `N/A` with a reason. A missing measurable improvement or differentiator is a stop signal for new self-built functionality.
+
+## Completion gate
+
+Do not report completion until the implementation has a focused verification tied to the stated success measure. Report any untested behavior, unresolved evidence gap, or rollback limitation explicitly.

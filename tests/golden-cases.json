@@ -1,0 +1,86 @@
+[
+  {
+    "id": "fde_scene_001",
+    "category": "场景选择",
+    "type": "golden",
+    "input": {
+      "project_name": "某银行信贷审批AI辅助",
+      "industry": "金融",
+      "pain_points": ["审批周期长", "人工复核成本高", "风控规则复杂"],
+      "data_readiness": "green",
+      "frequency": "high",
+      "quantifiable": true
+    },
+    "expected_output_keywords": ["低风险", "高频", "可量化", "数据就绪", "优先级"],
+    "required_steps": ["进门标准"],
+    "ground_truth": "该场景符合进门标准，建议列为P0优先级",
+    "constraints": {"tone": "结构化", "max_length": 600}
+  },
+  {
+    "id": "fde_discovery_001",
+    "category": "业务发现",
+    "type": "golden",
+    "input": {
+      "project_name": "某制造企业质检AI化",
+      "current_process": "人工目视检查+抽样复检",
+      "bottlenecks": ["漏检率高", "效率低", "标准不统一"]
+    },
+    "expected_output_keywords": ["AI机会地图", "流程瓶颈", "量化指标", "失败成本"],
+    "required_steps": ["工作流拆解", "失败成本量化"],
+    "ground_truth": "输出包含完整业务流程图、瓶颈分析、量化验收指标",
+    "constraints": {"tone": "结构化", "max_length": 800}
+  },
+  {
+    "id": "fde_eval_001",
+    "category": "评测体系",
+    "type": "golden",
+    "input": {
+      "project_name": "客服工单智能分类",
+      "metrics": ["准确率", "处理时长", "人工接管率"]
+    },
+    "expected_output_keywords": ["黄金样本集", "评分机制", "验收标准"],
+    "required_steps": ["规则校验", "离线评测集"],
+    "ground_truth": "评测集包含>=50条真实工单样本，评分器支持规则校验+LLM裁判",
+    "constraints": {"tone": "结构化", "max_length": 800}
+  },
+  {
+    "id": "fde_generalization_001",
+    "category": "资产沉淀",
+    "type": "golden",
+    "input": {
+      "project_name": "ERP单据智能审核",
+      "completed_steps": [1, 2, 3, 4, 5, 6, 7, 8]
+    },
+    "expected_output_keywords": ["Skill", "连接器", "行业模板", "Eval Harness", "Playbook"],
+    "required_assets": ["Skill", "连接器", "行业模板"],
+    "required_steps": ["Step 9"],
+    "ground_truth": "沉淀至少3个可复用Skill、1个ERP连接器、1套评测集",
+    "constraints": {"tone": "结构化", "max_length": 800}
+  },
+  {
+    "id": "base_gate_001",
+    "category": "构建门禁",
+    "type": "golden",
+    "input": {
+      "request": "新建一个把本地合同 PDF 批量摘要并生成 Excel 的 Agent",
+      "workspace_has": ["已装 markitdown-skill", "本地 Python 3.13"]
+    },
+    "expected_output_keywords": ["Step 0", "构建决策记录", "最小内核", "数据分级", "成功度量"],
+    "required_steps": ["Step 0 判定", "17 项决策记录"],
+    "ground_truth": "先出 17 项构建决策记录再写代码；判定为 Integrate/Improve 时复用既有解析能力，不重写；本地 PDF 默认不出本地信任边界",
+    "constraints": {"tone": "结构化", "max_length": 900}
+  },
+  {
+    "id": "base_verdict_go_001",
+    "category": "构建门禁 · Execution Verdict",
+    "type": "golden",
+    "input": {
+      "request": "在工作区已有脚本基础上补一个 PDF 批量摘要 CLI，任务、度量、边界、数据分级均已明确",
+      "evidence": "已列出现有能力、成功度量=摘要准确率≥90%、数据分级=Internal"
+    },
+    "expected_output_keywords": ["Execution Verdict", "GO", "成功度量", "最小内核"],
+    "required_steps": ["Step 0 判定"],
+    "ground_truth": "证据充足时给出 GO，并把 Verdict 写入决策记录作为进入执行的条件",
+    "constraints": {"tone": "结构化", "max_length": 900}
+  }
+]
