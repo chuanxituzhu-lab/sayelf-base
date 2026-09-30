@@ -1,6 +1,6 @@
 ---
 name: sayelf-base
-description: 共享总底座（中文唤起词：总底座 / 底座 / 共享底座 / 走底座 / 按底座来 / 构建门禁 / FDE 标准）——构建门禁层（Step 0 创新门禁、Execution Verdict、八项构建原则、12 步强制序列、17 项构建决策记录 + Verdict、简单优先、本地与数据主权）、运行时工具门禁（Tool Guardrail Contract）与交付收敛门禁（Convergence），以及 FDE 内容标准层（三要素判别、Echo-Delta 10 步闭环、Skill 标准模板与 7 原则 5 模式、Agent 评测集与双轨评分、8 个交付模板、资产回流红线）。在新建或重大修改 Agent / Skill / Tool / System / WebUI、或做立项门禁、MVP 定界、评测设计、运行时工具调用、资产沉淀与验收时使用。不适用于纯咨询调研、无工程产出的写作，也不适用于已标准化可配置覆盖的 SaaS 交付。
+description: 共享总底座（中文唤起词：总底座 / 底座 / 共享底座 / 走底座 / 按底座来 / 构建门禁 / FDE 标准）——构建门禁层（Step 0 创新门禁、Execution Verdict、八项构建原则、12 步强制序列、17 项构建决策记录 + Verdict、简单优先、本地与数据主权）、运行时工具门禁（Tool Guardrail Contract）与交付收敛门禁（Convergence），以及 FDE 内容标准层（三要素判别、Echo-Delta 10 步闭环、Skill 标准模板与 7 原则 5 模式、Agent 评测集与双轨评分、提示词评测先行迭代、8 个交付模板、资产回流红线）。在新建或重大修改 Agent / Skill / Tool / System / WebUI、提示词设计或迁移、立项门禁、MVP 定界、评测设计、运行时工具调用、资产沉淀与验收时使用。不适用于纯咨询调研、无工程产出的写作，也不适用于已标准化可配置覆盖的 SaaS 交付。
 metadata:
   short-description: 共享总底座（构建门禁 + FDE 内容标准）
   aliases: [总底座, 底座, 共享底座, 构建门禁, FDE 标准]
@@ -8,7 +8,7 @@ metadata:
 
 # SAYELF 共享总底座
 
-> 当前内容版本：1.0.2。版本信息保留在正文，避免进入 Agent Skills 校验器不允许的 frontmatter 字段。
+> 当前内容版本：1.0.3。版本信息保留在正文，避免进入 Agent Skills 校验器不允许的 frontmatter 字段。
 
 > **调用名：`sayelf-base`**（斜杠调用 `/sayelf-base`）。口头说「总底座」「走底座」「按底座来」「构建门禁」「FDE 标准」也应触发。
 
@@ -35,6 +35,7 @@ metadata:
 - 需要立项门禁：场景选择、进门标准、MVP 边界锁定、价值量化；
 - 需要设计评测集、评分器、验收标准或出口门；
 - 需要判断一项交付是否属于 FDE 场景、Echo 与 Delta 如何分工；
+- 需要设计、迁移、调试或迭代生产提示词，并建立可复现的评测基线；
 - 项目结项前的资产沉淀、知识转移与退出标准检查；
 - 需要提高 Codex、代码代理或其它大模型的提示/上下文缓存命中率；
 - 审查既有 Skill / Agent 是否符合标准（用本文件当 checklist）。
@@ -199,6 +200,14 @@ python tests/eval_scorer.py --cases tests/golden-cases.json --outputs <outputs.j
 - **安全与度量**：缓存键只含供应商、模型、租户/项目作用域和 Prompt 版本，不放原始用户数据；按 `cached_tokens / input_tokens`、P95 首 token 延迟、输入成本和 miss reason 评估，不用平均请求数掩盖低命中长前缀。
 - **执行检查**：先运行 `python scripts/cache_prefix.py --self-test`；需要检查请求布局时运行 `python scripts/cache_prefix.py --request <request.json>`。脚本只输出结构、告警和哈希，不回显敏感正文。
 
+### §8 提示词设计与评测先行迭代（详见 `references/prompt-engineering.md`）
+
+- 修改生产提示词前先定义完成标准、代表性评测用例和当前基线；新稿或缺少基线时明确标为未验证，不声称可生产使用。
+- 先判断失败来自指令歧义、数据缺失、模型能力、工具/代码或 Harness；每轮聚焦一个主要失败原因，再重跑完整相关评测并记录质量、安全、延迟与成本变化。
+- 将角色、任务、可信数据、嵌入文档等不可信输入、策略、工具和输出契约清楚分区；XML、Markdown 标题或 JSON 结构按模型与调用方需要选用，不强制单一格式。
+- 可确定性执行的硬约束、计算和查证放入代码或工具；提示词负责表达任务与工具使用条件，软偏好用明确评测标准衡量。
+- 模型、提示词与 Harness 一起评估；只有当中间产物需要审查或硬检查点时，才拆成生成、评估、修复阶段。
+
 ## AI Harness boundary
 
 - Harness（运行器 / Agent 循环 / 编排器）是**可替换适配器**，位于核心之外，fail-closed：不得静默扩大权限、工具访问、遥测、持久化或数据出网。
@@ -255,6 +264,7 @@ python tests/eval_scorer.py --cases tests/golden-cases.json --outputs <outputs.j
 | `references/eval-harness.md` | 设计评测集、评分器、分层指标时 |
 | `references/extended-cases-25.md` | 需要五阶段 25 条人工/裁判用例时 |
 | `references/cache-hit-principles.md` | 需要优化 Codex、代码代理或其它模型的上下文缓存命中时 |
+| `references/prompt-engineering.md` | 需要编写、迁移、调试提示词或设计提示词评测迭代时 |
 | `assets/templates/*.md` | 需要填写调研、勘查、方案、计划、验收、ROI、知识转移、资产清单模板时（01-08） |
 | `scripts/cache_prefix.py` | 需要对请求前缀、动态后缀、缓存键和命中率布局做本地确定性检查时 |
 | `tests/` | 需要跑规则轨评分或扩充用例时 |
