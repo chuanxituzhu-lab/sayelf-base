@@ -17,7 +17,7 @@
 11. 外发：N/A；官方 Agent Skills 与 LangGraph 文档只读查询，不上传仓库内容。
 12. 状态规则：普通单岗位计划保持 Sprint 01 原 4 个状态；后续任务状态记录为 `NOT_CREATED`，不得视为子工作项状态，也不得将父任务宣称交付完成。
 13. 认识边界：观察：Router 已生成 follow-up 字段，Planner 未透传；推断：用户预览中可能误认为结果完整；假设：字段透传能消除该差距；事实：测试将验证 Plan 和响应字段一致。15 个路由样本不代表总体置信度。
-14. 演进与回滚：改动前完整保留 sayelf-base 和被触及的 Agent Ops 源文件于 `D:\Codex\work\sayelf-agentops-shared-base-rollback-20261003`。验证失败可原样恢复；不改角色注册、技能、执行或审批。
+14. 演进与回滚：改动前完整保留 sayelf-base 和被触及的 Agent Ops 源文件于本地回滚快照。验证失败可原样恢复；不改角色注册、技能、执行或审批。
 15. WebUI：保留现有路由预览；跨行业时渐进显示一条“未建立的后续工作”提示，无 follow-up 时不增加界面噪声。
 16. 实现：stdlib dataclass 扩展、JSON 字段、现有单元评测、本机 Agent Skills validator 与 scorer；不加依赖。
 17. 明确不做：执行 follow-up、自动创建子工作流、增加 BLOCKED/REVIEW/EXECUTING 状态、Agent Ops executor/evidence service、人类审批、LangGraph 集成、公开发布。
