@@ -1,10 +1,10 @@
-# 八项构建原则（完整权威文本）
+# 动态核心构建原则（Principle Registry）
 
-> 本文件是 `sayelf-base` 的 **L3 原则详版**，用于展开说明主 Skill §2–§3。
+> 本文件是 `sayelf-base` 的 **L3 动态原则注册表详版**，用于展开说明主 Skill §2–§3。
 > 权威顺序：安装目录中的 `SKILL.md` 为唯一入口；Execution Verdict、Tool Guardrail Contract、Convergence 与任何冲突均以主 Skill 为准。
-> 原独立构建原则 Skill 已并入 `sayelf-base`，不再作为单独触发入口。
+> 原独立构建原则 Skill 已并入 `sayelf-base`，不再作为单独触发入口。当前 P01–P08 只是基线种子，原则数量可随任务证据增减。
 
-# Sayelf Build Principles
+# Sayelf Dynamic Build Principles
 
 Use this Skill in any compatible AI coding agent or agent platform before creating or materially changing an **Agent, Skill, Tool, System, or major feature**. It is a build-time decision and execution protocol, not a business framework or a prescribed technology stack.
 
@@ -24,7 +24,7 @@ Do not create a WebUI by default. First determine whether the real function need
 
 ## Portability contract
 
-- Treat the installed `sayelf-base/SKILL.md` as the canonical source of truth. This reference only expands the eight principles and development sequence.
+- Treat the installed `sayelf-base/SKILL.md` as the canonical source of truth. This reference expands the dynamic principle registry, current baseline entries, and development sequence.
 - Depend only on the portable instruction surface: YAML frontmatter with `name` and `description`, plus Markdown instructions.
 - Do not assume a particular model, tool name, shell, hook, path convention, environment variable, plugin API, or slash command. Use host-specific capabilities only when the host provides them, and keep them optional.
 - If a host requires an adapter or manifest, translate only installation and invocation details; preserve the gates, decision classes, evidence boundaries, and user path unchanged.
@@ -33,6 +33,39 @@ Do not create a WebUI by default. First determine whether the real function need
 ## Hard stop before coding
 
 Do not write implementation code until the Step 0 decision and the required pre-coding output are complete. If the request is a duplicate with no measurable improvement, stop and recommend reuse. If existing capabilities cover the need through composition, stop and recommend integration.
+
+## Principle Registry and Task Principle Profile
+
+The base does not have a fixed number of principles. It maintains a versioned registry of reusable principles, and derives the smallest applicable profile for each task.
+
+Each registry entry records at least:
+
+- `id` and stable title;
+- purpose and scope;
+- task, data, permission, and risk triggers;
+- dependencies and conflicts;
+- required evidence and completion check;
+- status, version, replacement, and retirement note.
+
+Each task profile records every relevant entry as one of:
+
+- `mandatory`: applies and must be satisfied;
+- `conditional`: applies only when its named trigger is present;
+- `not_applicable`: excluded only with explicit evidence and reason;
+- `blocked`: missing evidence, conflict, authorization, or safety condition prevents execution.
+
+The registry is adjusted by this order:
+
+1. detect task, data, permission, external-transfer, destructive-action, interface, and delivery-stage triggers;
+2. match the triggers to registry entries and load their dependencies;
+3. add conditional entries required by the matched profile;
+4. preserve immutable safety invariants and resolve conflicts fail-closed;
+5. record the resulting profile and its evidence in the Build Decision Record;
+6. recompute the profile when scope, state, data boundary, or execution mode changes.
+
+New principles may be added as new versioned entries. An entry may be removed from one task profile only when `not_applicable` is evidenced and no dependency or invariant is lost. Registry retirement requires a versioned replacement or an explicit reason. Silent deletion for brevity is prohibited.
+
+The following invariants survive every profile-size adjustment: authorization, scope, sensitive-data and destructive-action checks; public-release and external-transfer classification; credential non-egress; evidence before promotion or handoff; convergence before completion; and version, traceability, and rollback readiness. Evidence insufficiency yields `CLARIFY` or `STOP`, never `GO`.
 
 ## Step 0 — Innovation Gate
 
@@ -52,7 +85,7 @@ Classify the proposal as exactly one of these:
 
 **Improve is the minimum self-development threshold.** “Better”, “more intelligent”, or “more complete” is not evidence. Name at least one measurable difference: local control, token use, latency, cost, dependency count, compatibility, reliability, evidence quality, automation boundary, or usability.
 
-## Eight principles
+## Current baseline registry entries (active seed, not a fixed count)
 
 ### 01 — Negative Entropy
 
@@ -71,6 +104,10 @@ Keep the Core platform-independent. Make platform, collector, analyzer, model, s
 Treat an **AI harness**—the runner, agent loop, runtime, or orchestrator that drives model turns and tool execution—as a replaceable adapter outside the Core. Define a minimal bidirectional contract for task input and result output, capability discovery, tool calls, state and checkpoints, events, pause/resume/cancel, human approval, errors and retries, usage, and locally inspectable evidence. The Core must not depend on a provider-specific loop, event schema, or hosted control plane.
 
 Reuse shared harness capabilities before implementing local duplicates. These may include registered tools, models, agents, sessions, sandboxes, caches, memory or state stores, approval services, policy and guardrail services, schedulers, usage accounting, and tracing. Discover and negotiate capabilities at runtime through stable names, versions, schemas, and declared limits; record which provider and version produced each result. Keep task state and credentials isolated, request only the minimum capability and scope needed, and provide an explicit unavailable/denied/degraded path so shared capability loss does not corrupt Core state. Capability availability is not authorization: every use remains subject to explicit permission, local-first placement, and data-sovereignty rules.
+
+Treat shared AI platforms, agents, models, tools, memory, approval, evaluation, policy, cache, scheduling, and tracing as **Shared Capabilities** behind a provider-neutral contract. A capability may be supplied by a local implementation, API, plugin, MCP/connector, or Agent Endpoint. A Skill must be contract-ready—stable identity, version, input/output, permissions, data boundary, evidence, errors, health, and rollback—but does not have to become a network API when local execution is sufficient. API/plugin packaging is an adapter and deployment boundary, not a change to the Skill's semantic identity.
+
+At minimum, the adapter contract must support **discover → match → authorize → invoke → verify → record → version/deprecate**. Version or schema incompatibility, unknown permission/data boundary, unavailable capability, incomplete evidence, or failed post-check must fail closed or use an already-validated local deterministic fallback. A discovered, installed, healthy, authenticated, or model-reported capability is not thereby authorized for the current task.
 
 Harness integration must fail closed: it may coordinate or share only explicitly granted capabilities and must not silently widen permissions, tool access, telemetry, persistence, or data egress. Apply Principle 03 to execution placement, Principle 05 to automated decisions, Principle 06 to harness changes, and Principle 08 to prompts, traces, checkpoints, shared state, and tool inputs/outputs.
 

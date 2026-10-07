@@ -82,5 +82,44 @@
     "required_steps": ["Step 0 判定"],
     "ground_truth": "证据充足时给出 GO，并把 Verdict 写入决策记录作为进入执行的条件",
     "constraints": {"tone": "结构化", "max_length": 900}
+  },
+  {
+    "id": "base_shared_capability_001",
+    "category": "共享能力与 API/插件化",
+    "type": "golden",
+    "input": {
+      "request": "把一个本地 Skill 接入共用 AI 平台，并允许将来切换为 API、插件或 Agent Endpoint",
+      "constraints": "核心不能绑定供应商，接入必须可审计并可回退"
+    },
+    "expected_output_keywords": ["Shared Capability", "provider-neutral", "API", "插件", "能力可用不等于已授权", "回退"],
+    "required_steps": ["能力发现", "权限检查", "POST CHECK"],
+    "ground_truth": "Skill保持语义契约，API/插件/MCP/Agent Endpoint只是可替换适配器；必须检查版本、权限、数据边界、证据和回退，不强制本地Skill网络化",
+    "constraints": {"tone": "结构化", "max_length": 1000}
+  },
+  {
+    "id": "base_dynamic_principles_001",
+    "category": "动态原则注册表",
+    "type": "golden",
+    "input": {
+      "request": "一个只做本地、无破坏性写入的 Skill 需要按任务自动选择适用底座原则；如果后续增加外部 API 和敏感数据处理，原则集应自动扩展",
+      "evidence": "任务范围、数据分类、权限和证据要求可记录"
+    },
+    "expected_output_keywords": ["Principle Registry", "mandatory", "conditional", "not_applicable", "自动调整", "不固定"],
+    "required_steps": ["识别触发条件", "记录 Principle Profile", "重新计算"],
+    "ground_truth": "P01-P08 只是当前基线，不是固定八项；按触发器、依赖和证据生成最小原则集，新增或移除必须可解释且不删除安全不变量",
+    "constraints": {"tone": "结构化", "max_length": 1000}
+  },
+  {
+    "id": "base_agent_division_001",
+    "category": "通用 Agent 分工工作流",
+    "type": "golden",
+    "input": {
+      "request": "把每天的邮件汇总做成一个可审查的 Agent 分工工作流，并说明记忆、工具和验收边界",
+      "constraints": "不要绑定 ADK 或其它供应商运行时"
+    },
+    "expected_output_keywords": ["Sequential", "Session", "Memory Bank", "验收", "未验证"],
+    "required_steps": ["真实重复任务", "角色输入输出", "通信", "工具边界"],
+    "ground_truth": "先过分工门控，再选择五种模式之一；Session 与 Memory Bank 分开；工具按函数/API 与 MCP 边界选择；所有角色有输入、输出、禁止事项和验收",
+    "constraints": {"tone": "结构化", "max_length": 1200}
   }
 ]
