@@ -93,7 +93,7 @@
     },
     "expected_output_keywords": ["Shared Capability", "provider-neutral", "API", "插件", "能力可用不等于已授权", "回退"],
     "required_steps": ["能力发现", "权限检查", "POST CHECK"],
-    "ground_truth": "Skill保持语义契约，API/插件/MCP/Agent Endpoint只是可替换适配器；必须检查版本、权限、数据边界、证据和回退，不强制本地Skill网络化",
+    "ground_truth": "Skill保持语义契约，API/MCP/CLI/插件/Agent Endpoint只是可替换适配器；必须检查版本、权限、数据边界、证据和回退，不强制本地Skill网络化",
     "constraints": {"tone": "结构化", "max_length": 1000}
   },
   {
@@ -106,7 +106,7 @@
     },
     "expected_output_keywords": ["Principle Registry", "mandatory", "conditional", "not_applicable", "自动调整", "不固定"],
     "required_steps": ["识别触发条件", "记录 Principle Profile", "重新计算"],
-    "ground_truth": "P01-P08 只是当前基线，不是固定八项；按触发器、依赖和证据生成最小原则集，新增或移除必须可解释且不删除安全不变量",
+    "ground_truth": "P01-P12 只是当前基线，不是固定十二项；按触发器、依赖和证据生成最小原则集，新增或移除必须可解释且不删除安全不变量",
     "constraints": {"tone": "结构化", "max_length": 1000}
   },
   {
@@ -120,6 +120,19 @@
     "expected_output_keywords": ["Sequential", "Session", "Memory Bank", "验收", "未验证"],
     "required_steps": ["真实重复任务", "角色输入输出", "通信", "工具边界"],
     "ground_truth": "先过分工门控，再选择五种模式之一；Session 与 Memory Bank 分开；工具按函数/API 与 MCP 边界选择；所有角色有输入、输出、禁止事项和验收",
+    "constraints": {"tone": "结构化", "max_length": 1200}
+  },
+  {
+    "id": "base_access_surfaces_render_001",
+    "category": "底座原则 · API/MCP/CLI/Harness/本地渲染",
+    "type": "golden",
+    "input": {
+      "request": "一个 Skill 需要调用大模型，并作为 AI Harness 插件接入；同时需要图像和 3D 渲染",
+      "evidence": "本地渲染能力、质量/延迟/成本阈值、数据分类和插件宿主边界均可记录"
+    },
+    "expected_output_keywords": ["P10", "API", "MCP", "CLI", "P11", "Harness", "插件", "P12", "本地渲染优先", "PRE CHECK"],
+    "required_steps": ["能力契约", "适配器", "本地优先"],
+    "ground_truth": "P10 预留 API/MCP/CLI 接入面，P11 预留 Harness 的 MCP/CLI/插件入口，P12 要求图像/3D 先本地代码或本地引擎；所有调用经过 PRE CHECK → EXECUTE → POST CHECK",
     "constraints": {"tone": "结构化", "max_length": 1200}
   }
 ]

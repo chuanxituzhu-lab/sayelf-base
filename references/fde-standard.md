@@ -124,7 +124,7 @@ FDE 项目遵循"**进场 → 立项 → 交付 → 放大**"四阶段流程：
 
 ### 4.2 插件化封装（Agent Plugins 1.0.0）
 
-插件是共享能力的可选部署适配器，不是所有 Skill 的强制形态。插件、API、MCP/连接器或 Agent Endpoint 均须遵守 `references/shared-capability-contract.md`：稳定能力身份与版本、最小权限、数据边界、健康/兼容、证据、降级和回滚。宿主所需的 `plugin.json`、`mcp.json` 或其它清单只负责翻译安装/调用信息，不能把供应商专属循环、SDK 或控制面渗入核心。
+插件是共享能力的可选部署适配器，不是所有 Skill 的强制形态。插件、API、MCP/连接器、CLI 或 Agent Endpoint 均须遵守 `references/shared-capability-contract.md`：稳定能力身份与版本、最小权限、数据边界、健康/兼容、证据、降级和回滚。CLI 还必须具备结构化 stdin/stdout、固定退出码、超时/取消和安全凭证注入。宿主所需的 `plugin.json`、`mcp.json` 或其它清单只负责翻译安装/调用信息，不能把供应商专属循环、SDK 或控制面渗入核心。
 
 #### 标准插件目录结构
 

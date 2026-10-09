@@ -1,6 +1,6 @@
 # 通用多 Skill 工作流编排
 
-> `sayelf-base` v1.1.1 的 L3 参考。它把目标编译为最小、可验证、可恢复的多 Skill/Agent 工作流，并支持通过统一契约接入共享 AI 平台或 Agent 能力；不代替单个 Skill 的专业规则，不实现执行引擎。
+> `sayelf-base` v1.1.2 的 L3 参考。它把目标编译为最小、可验证、可恢复的多 Skill/Agent 工作流，并支持通过统一契约接入共享 AI 平台或 Agent 能力；不代替单个 Skill 的专业规则，不实现执行引擎。
 
 ## 1. 适用范围与边界
 
@@ -25,7 +25,7 @@ Goal
 → Minimum Skill Set
 → Dependency Graph
 → Serial / Conditional / Parallel Assembly
-→ Adapter Selection (Local / API / Plugin / MCP / Agent Endpoint)
+→ Adapter Selection (Local / API / MCP / CLI / Plugin / Agent Endpoint)
 → Validated Inputs
 → Execution Contracts
 → Acceptance / Human Gates
@@ -36,7 +36,7 @@ Goal
 → Run Closure / Convergence
 ```
 
-一次运行只选择对当前 Goal 有实质贡献的 Skill 或共享能力。先根据真实交接依赖确定顺序，再决定串行、条件分支或并行；不得因 Skill/能力已安装、可调用或名称相似就自动纳入。API、插件、MCP/连接器和 Agent Endpoint 是适配器，不是新的业务能力身份。
+一次运行只选择对当前 Goal 有实质贡献的 Skill 或共享能力。先根据真实交接依赖确定顺序，再决定串行、条件分支或并行；不得因 Skill/能力已安装、可调用或名称相似就自动纳入。API、MCP/连接器、CLI、插件和 Agent Endpoint 是适配器，不是新的业务能力身份。
 
 ## 3. 组装原则 P14–P18
 
@@ -49,15 +49,16 @@ Goal
 ## 3.1 共享能力原则 C1–C8
 
 - **C1 — Capability as a Plug-in**：共用 AI 平台、Agent、模型、工具、记忆、审批、评测、策略、缓存、调度和追踪作为可插拔共享能力；核心只依赖语义契约。
-- **C2 — Transport-neutral Contract**：本地实现、脚本、API、插件、MCP/连接器和 Agent Endpoint 都是可替换传输/部署层；更换适配器不改变能力语义、权限、数据边界或验收规则。
-- **C3 — API-ready, not API-mandatory**：Skill 必须可声明稳定输入/输出、状态、错误、证据和权限契约；只有跨进程、跨项目、共享平台或部署场景有明确收益时才 API 化，不强迫本地 Skill 网络化。
+- **C2 — Transport-neutral Contract**：本地实现、脚本、API、MCP/连接器、CLI、插件和 Agent Endpoint 都是可替换传输/部署层；更换适配器不改变能力语义、权限、数据边界或验收规则。
+- **C3 — Contract-ready, not network-mandatory**：Skill 必须可声明稳定输入/输出、状态、错误、证据和权限契约；只有跨进程、跨项目、共享平台或部署场景有明确收益时才选择 API、MCP、CLI 或插件，不强迫本地 Skill 网络化。
 - **C4 — Explicit Adapter Registry**：每个适配器声明名称、版本、提供方、入口、依赖、权限、健康检查、兼容范围、错误/降级和回滚；供应商专属字段不得渗入核心。
 - **C5 — Capability Is Not Authorization**：已发现、已安装、健康、认证成功或模型声称可用，都不等于本次任务已授权；每次运行重新检查最小作用域和人工门禁。
 - **C6 — Contract and Version Compatibility**：Schema、协议、权限、数据边界或行为发生变化时建立新版本，协商后灰度；破坏性变化不得复用旧身份覆盖旧契约。
 - **C7 — Fail-closed and Local Fallback**：能力、适配器、版本、权限、数据分类或证据不明时阻断/降级；仅使用已验证的本地确定性回退，不伪造空成功。
-- **C8 — Evidence and Sovereignty**：记录提供方、适配器、版本、调用 ID、结果版本、实际状态变化、数据边界、验收和下一检查；本地/内部/敏感/受限/未知数据不得因 API 或插件存在而自动外发。
+- **C8 — Evidence and Sovereignty**：记录提供方、适配器、版本、调用 ID、结果版本、实际状态变化、数据边界、验收和下一检查；本地/内部/敏感/受限/未知数据不得因 API、MCP、CLI 或插件存在而自动外发。
+- **C9 — Local Render First**：图像、3D、视频和其他可确定性渲染优先使用本地代码或本地引擎；只有本地质量、性能或能力不足且证据充分时，才选择模型/远程适配器，并记录不足原因、质量/延迟/成本、数据边界、版本和回退路径。
 
-共享能力的最小调用链为：`DISCOVER → MATCH → AUTHORIZE → INVOKE → VERIFY → RECORD → VERSION / DEPRECATE`。字段和适配器最低契约见 `references/shared-capability-contract.md`。
+共享能力的最小调用链为：`DISCOVER → MATCH → AUTHORIZE → INVOKE → VERIFY → RECORD → VERSION / DEPRECATE`。字段和适配器最低契约见 `references/shared-capability-contract.md`；API、MCP、CLI 和插件调用均不得绕过 Tool Guardrail。
 
 ## 3.2 Agent 分工工作流：最小分工决策
 
@@ -101,6 +102,7 @@ Goal
 | `Session` | 本次输入、当前状态、中间字段、检查点和本轮决定 | 不把它默认为跨会话长期事实；不存凭证或无必要敏感正文 |
 | `Memory Bank` | 已确认、可追溯、跨会话仍有价值的偏好、稳定结论、契约和版本 | 不直接写入原始长对话、未核实推测、临时日志、凭证或客户原始数据 |
 | 函数/API | 一个已知、调用方式固定的接口 | 不因每增加一个后端就复制适配器并称为新架构 |
+| CLI | 本地进程、子进程或 Harness 插件桥接，stdin/stdout 可结构化 | 不把秘密放入 argv；必须声明版本、退出码、超时、权限、数据边界和证据 |
 | MCP/连接器 | 多个后端需要共同工具协议的能力集合 | 不把单个 REST 接口包装成 MCP；必须声明服务器、工具、只读/可写和批准边界 |
 
 写入 `Memory Bank` 前先从本轮证据中抽取事实，记录来源、版本、写入者、读取者、数据分类、保留期限和回滚方式。记忆层不改变底座的数据主权和 Tool Guardrail 约束。
@@ -189,9 +191,9 @@ Goal
 
 ## 8. 共享能力接入与非目标
 
-多 Skill 工作流选择共享能力时，先在 Capability Registry 中匹配能力契约，再选择适配器；不要把 API、插件、MCP/连接器或 Agent Endpoint 直接当成新的 Skill。适配器必须携带能力身份、版本、Schema、权限/作用域、数据分类、健康、证据和回退声明，并按 `DISCOVER → MATCH → AUTHORIZE → INVOKE → VERIFY → RECORD` 执行。
+多 Skill 工作流选择共享能力时，先在 Capability Registry 中匹配能力契约，再选择适配器；不要把 API、MCP/连接器、CLI、插件或 Agent Endpoint 直接当成新的 Skill。适配器必须携带能力身份、版本、Schema、权限/作用域、数据分类、健康、证据和回退声明，并按 `DISCOVER → MATCH → AUTHORIZE → INVOKE → VERIFY → RECORD` 执行。
 
-一个本地 Skill 要不要 API 化或插件化，按真实复用、隔离、权限、部署和跨进程需求判定。只在有明确收益且通过 Step 0 时增加适配器；保持本地运行的 Skill 仍需契约可接入，但不被强制网络化。共享 AI 平台或 Agent 能力不可用、未授权、版本不兼容或 POST CHECK 失败时，工作流只能进入 `BLOCKED` / `DEGRADED` 或已验证的本地回退。
+一个本地 Skill 要不要 API 化、MCP 化、CLI 化或插件化，按真实复用、隔离、权限、部署和跨进程需求判定。只在有明确收益且通过 Step 0 时增加适配器；保持本地运行的 Skill 仍需契约可接入，但不被强制网络化。共享 AI 平台或 Agent 能力不可用、未授权、版本不兼容或 POST CHECK 失败时，工作流只能进入 `BLOCKED` / `DEGRADED` 或已验证的本地回退。
 
 ## 9. 普通用户结果视图与非目标
 

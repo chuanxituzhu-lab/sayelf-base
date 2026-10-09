@@ -1,10 +1,10 @@
-# 共享能力与 API / 插件化契约
+# 共享能力与 API / MCP / CLI / 插件化契约
 
-> `sayelf-base` v1.1.1 的 L3 参考。用于把共用 AI 平台、Agent、模型、工具、记忆、审批、评测或其它可复用能力接入 Skill / Harness。本文定义语义与安全契约，不绑定具体供应商、SDK、协议或托管平台。
+> `sayelf-base` v1.1.2 的 L3 参考。用于把共用 AI 平台、Agent、模型、工具、记忆、审批、评测或其它可复用能力接入 Skill / Harness。本文定义语义与安全契约，不绑定具体供应商、SDK、协议或托管平台。
 
 ## 1. 目标与非目标
 
-共享能力是可被多个任务、Skill 或 Agent 复用的能力单元。它可以运行在本地，也可以由 API、插件、MCP/连接器或 Agent Endpoint 提供。核心只依赖能力契约；接入协议由适配器负责。
+共享能力是可被多个任务、Skill 或 Agent 复用的能力单元。它可以运行在本地，也可以由 API、MCP/连接器、CLI、插件或 Agent Endpoint 提供。核心只依赖能力契约；接入协议由适配器负责。
 
 本标准不要求每个 Skill 都变成网络服务，也不把“API 化”误解为把所有业务逻辑搬到云端。单机、本地、低风险、无需跨进程复用的 Skill 可以保持本地实现；只有在复用、隔离、权限、部署或接入场景有明确收益时，才增加 API/插件适配层。
 
@@ -19,14 +19,14 @@ Capability Registry
         ↓ discover + match + compatibility
 Provider-neutral Capability Contract
         ↓ authorize + data boundary + human gate
-Local Adapter | API Adapter | Plugin Adapter | MCP/Connector | Agent Endpoint
+Local Adapter | API Adapter | MCP/Connector | CLI Adapter | Plugin Adapter | Agent Endpoint
         ↓ invoke
 PRE CHECK → EXECUTE → POST CHECK
         ↓
 Versioned Result + Evidence + State Change + Next Check
 ```
 
-“能力”是语义对象，“API/插件/MCP/连接器/Agent Endpoint”是接入方式。更换接入方式不应改变目标、输入输出含义、权限边界、验收规则或证据结构。
+“能力”是语义对象，“API/MCP/CLI/插件/连接器/Agent Endpoint”是接入方式。更换接入方式不应改变目标、输入输出含义、权限边界、验收规则或证据结构。
 
 ## 3. Shared Capability Contract
 
@@ -38,7 +38,7 @@ capability:
   version: 1.0.0
   kind: skill | agent | model | tool | service | policy | evaluator
   provider: local | named-provider-or-team
-  adapter: local | api | plugin | mcp | connector | agent-endpoint
+  adapter: local | api | mcp | connector | cli | plugin | agent-endpoint
   purpose: "一行说明可验证的能力"
   in_scope: []
   out_of_scope: []
@@ -92,7 +92,7 @@ compatibility:
 
 ### 4.4 INVOKE
 
-适配器将统一的能力调用翻译为本地函数、API 请求、插件入口、MCP 工具/资源、连接器或 Agent Endpoint 调用。只传输最小必要字段，保留调用 ID、契约版本、实际适配器和批准范围。不得静默增加工具、权限、遥测、持久化或出网。
+适配器将统一的能力调用翻译为本地函数、API 请求、MCP 工具/资源、CLI 命令、插件入口、连接器或 Agent Endpoint 调用。只传输最小必要字段，保留调用 ID、契约版本、实际适配器和批准范围。不得静默增加工具、权限、遥测、持久化或出网。
 
 ### 4.5 VERIFY
 
@@ -115,12 +115,25 @@ API 化是跨进程/跨服务接入层。API 适配器至少说明：
 
 API 只暴露经过契约批准的能力，不把任意供应商 API 直接透传为高权限“万能代理”。动态 URL、Header、工具名、租户或权限的扩大属于契约变化，必须重新走 Step 0、PRE CHECK 和版本/审批门禁。
 
+## 5.1 CLI 适配器最低契约
+
+CLI 是本地进程、子进程或 Harness 插件桥接层。CLI 适配器至少说明：
+
+- 稳定命令/入口、版本、能力名称和兼容范围；
+- 结构化 stdin/stdout Schema（优先 JSON），stdout 与 stderr 分离，固定退出码语义；
+- 超时、取消、幂等、重试、并发和部分成功语义；
+- 权限、资源/动作/时间作用域、输入/输出数据分类和允许信任边界；
+- 凭证通过安全环境/受控配置/宿主注入，不得出现在命令行参数、普通日志或输出中；
+- `call_id`、结果版本、状态变化、错误/降级、健康检查和回滚/补偿路径。
+
+CLI 只是适配器，不是授权边界，也不是绕过 Harness 的后门。命令、参数、环境、工作目录、子进程和网络权限必须经过 PRE CHECK；退出码为非零、输出结构不完整、状态不明或 POST CHECK 失败时，返回 `blocked` / `degraded`，不得把空输出或部分输出伪装成成功。
+
 ## 6. 插件适配器最低契约
 
 插件化是将能力与适配器、资源、配置和验证一起封装，以便在宿主中发现、安装、启用、升级、停用和回滚。插件至少声明：
 
-- 唯一名称、版本、兼容宿主范围、入口与生命周期；
-- 所需 Skill/工具/API/运行时依赖及其版本范围；
+- 唯一名称、版本、兼容宿主范围、MCP/CLI/插件入口与生命周期；
+- 所需 Skill/工具/API/MCP/CLI/运行时依赖及其版本范围；
 - 读取/写入路径、网络、进程、凭证、遥测和持久化权限；
 - 能力 Schema、健康检查、错误/降级、卸载与回滚；
 - 安装前后的数据分类、校验和证据；
@@ -147,14 +160,14 @@ Agent 的“规划完成”“返回文本”或“声称调用成功”不等�
 | 同 Schema、同权限、同验收的补丁版本 | 按声明升级，保留结果版本与回滚点 | 静默替换提供方或扩大作用域 |
 | 向后兼容的 Schema 变化 | 新版本协商后灰度，旧版本可回退 | 让旧消费者接收未声明的新字段语义 |
 | 破坏性 Schema/权限/数据边界变化 | 新能力版本、重新评测、人工/发布门禁 | 复用旧名称覆盖旧契约 |
-| API/插件健康失败 | `UNAVAILABLE` / `DEGRADED`，走已验证回退 | 空结果伪装成功、自动切未审查能力 |
+| API/MCP/CLI/插件健康失败 | `UNAVAILABLE` / `DEGRADED`，走已验证回退 | 空结果伪装成功、自动切未审查能力 |
 | 能力授权过期或状态改变 | 重新 PRE CHECK；必要时暂停 | 使用过期批准继续执行 |
 | 结果部分成功或状态不明 | 隔离、标记、查证或补偿 | 当作完整成功写入下游 |
 
 ## 9. 与底座其它门禁的关系
 
-- Step 0 决定复用、接入、改进或停止；将现有 API/插件直接接入时仍须判断 `Integrate`，不因“已有接口”跳过证据。
+- Step 0 决定复用、接入、改进或停止；将现有 API/MCP/CLI/插件直接接入时仍须判断 `Integrate`，不因“已有接口”跳过证据。
 - Tool Guardrail 负责单次工具动作；Shared Capability Contract 负责能力身份、接口、适配器和生命周期；二者同时适用。
 - 多 Skill 编排负责能力匹配、最小集合、依赖、并行、执行契约、验收、交接与运行账本。
 - Convergence Gate 负责整个目标是否与 `Intent / Spec / Plan / Task` 收敛；共享能力本身通过不代表父目标收敛。
-- 数据主权优先于 API 便利性；本地、内部、敏感、受限或未知数据不可因插件/API/Agent 的存在自动外发。
+- 数据主权优先于 API/MCP/CLI 便利性；本地、内部、敏感、受限或未知数据不可因插件/API/Agent 的存在自动外发。

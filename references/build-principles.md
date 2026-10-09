@@ -2,7 +2,7 @@
 
 > 本文件是 `sayelf-base` 的 **L3 动态原则注册表详版**，用于展开说明主 Skill §2–§3。
 > 权威顺序：安装目录中的 `SKILL.md` 为唯一入口；Execution Verdict、Tool Guardrail Contract、Convergence 与任何冲突均以主 Skill 为准。
-> 原独立构建原则 Skill 已并入 `sayelf-base`，不再作为单独触发入口。当前 P01–P08 只是基线种子，原则数量可随任务证据增减。
+> 原独立构建原则 Skill 已并入 `sayelf-base`，不再作为单独触发入口。当前 P01–P12 只是基线种子，原则数量可随任务证据增减。
 
 # Sayelf Dynamic Build Principles
 
@@ -144,6 +144,30 @@ For GitHub and any public network, local, internal, sensitive, restricted, or un
 Only content explicitly classified **Public** may leave the local trust boundary for GitHub or public publication. Before transfer, review the staged diff and every release artifact for local, internal, sensitive, restricted, or unknown data. If classification, authorization, destination, retention, or leak-check evidence is missing, block the transfer and keep the data local. Other external transfers are allowed only when necessary, specifically authorized, minimized, locally redacted or tokenized, sent through an approved secure route, and auditable for leakage.
 
 Review prompts, outputs, errors, logs, traces, caches, and telemetry for accidental disclosure. Local-first therefore means both **local computation** and **local data control**.
+
+### 09 — Local Deterministic Text Rendering
+
+For text that must appear in a graphic (including cover headline/subhead), prefer deterministic local code rendering with existing SVG, Canvas, or raster-compositing capabilities. Do not send text, source images, or drafts to a third-party rendering service; do not add a dependency if an existing local renderer is sufficient. Reuse the same final rendered artifact across preview, export, and publishing; keep typography legible and within the target platform's safe area. Preserve the original media and make the rendered output a derived copy. Respect explicit human edits over generated suggestions. Verify rendered text and dimensions locally before handoff. Applies to image/cover and media-delivery tasks; excludes cases where the user explicitly requests a provider and separately authorizes the required data transfer, which must still pass Principle 08.
+
+### 10 — Model / Capability Access Surface
+
+When an Agent or Skill needs a large model, model capability, or a shared capability across processes, first define a stable provider-neutral semantic contract and reserve the applicable access surfaces: **API, MCP, and CLI**. These are replaceable adapters, not new capability identities, and a Skill does not need to expose all three.
+
+At minimum, a CLI adapter declares a stable entry point, version, structured stdin/stdout (JSON preferred), stdout/stderr separation, exit codes, timeout/cancellation, idempotency or retry rules, minimum permissions and scope, data classification, call/evidence ID, and secure credential injection. Secrets must not be placed in command-line arguments. Unknown authorization, scope, data boundary, result structure, or evidence is `blocked` / `degraded`, never an implied success.
+
+The API/MCP/CLI surface is selected by Step 0 based on reuse, isolation, deployment, interoperability, and data-boundary evidence. API-ready does not mean network-mandatory; local execution remains valid when it satisfies the real task.
+
+### 11 — Harness Plugin Access Surface
+
+When an Agent or Skill must connect to an AI Harness or run as a host plugin, define a provider-neutral plugin contract and reserve a host-compatible **MCP, CLI, or plugin entry point**. The manifest or adapter record must declare entry, version, host compatibility, capabilities, dependencies, permissions, data boundary, health check, evidence, degradation, uninstall, and rollback.
+
+MCP is appropriate when multiple backends need a common tool/resource protocol; CLI is appropriate as a stable local or subprocess bridge; a host plugin entry is appropriate when the Harness owns lifecycle and discovery. None of these surfaces authorizes itself or may widen tools, persistence, telemetry, network egress, or data scope. Every call remains inside `PRE CHECK → EXECUTE → POST CHECK`, with fail-closed behavior when the host or adapter is unavailable.
+
+### 12 — Local Render First
+
+For image, 3D, video, and other rendering or processing that can be implemented deterministically, use local code or a local engine first when the device meets the required quality, performance, and capability thresholds. Connect a model or remote capability only when local execution is demonstrably insufficient or a measurable benefit justifies it.
+
+The decision record must state the local insufficiency reason, quality/latency/cost evidence, selected provider and adapter version, data boundary, human-approval requirement, local fallback, and rollback path. Keep original assets locally, emit derived artifacts, and apply PRE/POST checks to any model or remote call. Do not hand deterministic layout, typography, conversion, or rendering to a model merely for convenience. Principle 09 remains the typography-specific control; Principle 12 is the broader image/3D/video placement rule.
 
 ## Simple-first constraint
 
