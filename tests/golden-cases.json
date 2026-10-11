@@ -106,7 +106,7 @@
     },
     "expected_output_keywords": ["Principle Registry", "mandatory", "conditional", "not_applicable", "自动调整", "不固定"],
     "required_steps": ["识别触发条件", "记录 Principle Profile", "重新计算"],
-    "ground_truth": "P01-P12 只是当前基线，不是固定十二项；按触发器、依赖和证据生成最小原则集，新增或移除必须可解释且不删除安全不变量",
+    "ground_truth": "P01-P14 只是当前基线，不是固定十四项；按触发器、依赖和证据生成最小原则集，新增或移除必须可解释且不删除安全不变量",
     "constraints": {"tone": "结构化", "max_length": 1000}
   },
   {
@@ -134,5 +134,18 @@
     "required_steps": ["能力契约", "适配器", "本地优先"],
     "ground_truth": "P10 预留 API/MCP/CLI 接入面，P11 预留 Harness 的 MCP/CLI/插件入口，P12 要求图像/3D 先本地代码或本地引擎；所有调用经过 PRE CHECK → EXECUTE → POST CHECK",
     "constraints": {"tone": "结构化", "max_length": 1200}
+  },
+  {
+    "id": "base_multiharness_selfrun_001",
+    "category": "底座原则 · 多平台 Harness/共享宿主/自运行",
+    "type": "golden",
+    "input": {
+      "request": "让一个 Agent/Skill 同时接入多个 Harness，优先复用宿主模型与工具；宿主模型不可用时才允许自带模型自主运行",
+      "evidence": "各 Harness 入口/版本/能力/权限/数据边界可记录，自运行预算与停止条件已定义"
+    },
+    "expected_output_keywords": ["P13", "多平台 Harness", "共享宿主能力", "适配矩阵", "P14", "可选", "预算", "停止条件", "UNAVAILABLE"],
+    "required_steps": ["能力发现", "授权", "回退"],
+    "ground_truth": "P13 以 host adapter matrix 保持跨 Harness 语义一致并优先复用共享宿主能力；P14 仅在宿主模型不可用或有证据收益时启用自运行，必须有预算、停止条件、证据和回退，不满足时 UNAVAILABLE/BLOCKED",
+    "constraints": {"tone": "结构化", "max_length": 1400}
   }
 ]

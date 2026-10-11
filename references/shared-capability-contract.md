@@ -1,6 +1,6 @@
 # 共享能力与 API / MCP / CLI / 插件化契约
 
-> `sayelf-base` v1.1.2 的 L3 参考。用于把共用 AI 平台、Agent、模型、工具、记忆、审批、评测或其它可复用能力接入 Skill / Harness。本文定义语义与安全契约，不绑定具体供应商、SDK、协议或托管平台。
+> `sayelf-base` v1.1.3 的 L3 参考。用于把共用 AI 平台、Agent、模型、工具、记忆、审批、评测或其它可复用能力接入多个 Harness。本文定义语义与安全契约，不绑定具体供应商、SDK、协议或托管平台。
 
 ## 1. 目标与非目标
 
@@ -72,9 +72,20 @@ compatibility:
   dependencies: []
   health: required
   rollback: "version or adapter rollback path"
+execution:
+  harnesses: []
+  shared_host_capabilities: []
+  self_run: supported | optional | unsupported | blocked
+  model_runtime: "model/runtime/adapter when self-run is selected"
+  budget: "turn/token/time/cost limits"
+  stop_conditions: []
 ```
 
 `Unknown` 不是可默认放行的等级。未知的权限、作用域、输入/输出分类、留存、兼容性或结果证据，按 fail-closed 处理。
+
+### 3.1 多平台 Harness 与共享宿主能力
+
+同一 Agent/Skill 接入多个 Harness 时，核心语义、输入输出、权限、数据边界、验收和证据结构保持一致；按宿主适配矩阵登记入口、版本、能力、权限与作用域、数据边界、生命周期、暂停/恢复/取消、健康、降级和回滚。共享宿主能力优先复用，平台差异只留在适配器；不兼容或边界未知时返回 `BLOCKED` / `DEGRADED`。
 
 ## 4. 能力生命周期
 
@@ -152,6 +163,10 @@ Agent 可以作为一个共享能力节点，但不能仅以“Agent 名称”�
 - 可否作为下游 Skill 的输入，以及对应验收规则。
 
 Agent 的“规划完成”“返回文本”或“声称调用成功”不等于业务结果已产生。没有执行证据、验收通过或 Convergence，不得 handoff 或报完成。
+
+### 7.1 可选大模型自运行
+
+自运行是可选路径，不是默认权限。只有共享宿主模型不可用，或有证据表明自运行在本地控制、数据主权、延迟、成本或可靠性上有实质收益时，才可启用。启用前必须登记 `self_run` 状态、模型/runtime/版本、轮次/Token/时间/成本预算、工具与最小权限、数据边界、Session/Memory、人工批准、停止/取消/暂停/恢复与失败条件、证据、回退和回滚。任一条件未知或不满足时返回 `UNAVAILABLE` / `BLOCKED` / `CLARIFY`，不得无限循环或声称自主运行。
 
 ## 8. 兼容、升级与回退矩阵
 

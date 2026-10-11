@@ -2,7 +2,7 @@
 
 > 本文件是 `sayelf-base` 的 **L3 动态原则注册表详版**，用于展开说明主 Skill §2–§3。
 > 权威顺序：安装目录中的 `SKILL.md` 为唯一入口；Execution Verdict、Tool Guardrail Contract、Convergence 与任何冲突均以主 Skill 为准。
-> 原独立构建原则 Skill 已并入 `sayelf-base`，不再作为单独触发入口。当前 P01–P12 只是基线种子，原则数量可随任务证据增减。
+> 原独立构建原则 Skill 已并入 `sayelf-base`，不再作为单独触发入口。当前 P01–P14 只是基线种子，原则数量可随任务证据增减。
 
 # Sayelf Dynamic Build Principles
 
@@ -168,6 +168,14 @@ MCP is appropriate when multiple backends need a common tool/resource protocol; 
 For image, 3D, video, and other rendering or processing that can be implemented deterministically, use local code or a local engine first when the device meets the required quality, performance, and capability thresholds. Connect a model or remote capability only when local execution is demonstrably insufficient or a measurable benefit justifies it.
 
 The decision record must state the local insufficiency reason, quality/latency/cost evidence, selected provider and adapter version, data boundary, human-approval requirement, local fallback, and rollback path. Keep original assets locally, emit derived artifacts, and apply PRE/POST checks to any model or remote call. Do not hand deterministic layout, typography, conversion, or rendering to a model merely for convenience. Principle 09 remains the typography-specific control; Principle 12 is the broader image/3D/video placement rule.
+
+### 13 — Multi-Harness and Shared Host Capability
+
+When an Agent or Skill connects to two or more Harnesses, or reuses host-provided models, tools, Agents, sessions, sandboxes, caches, memory, approvals, policies, schedulers, usage accounting, or tracing, keep the Core provider-neutral and declare a host adapter matrix. Each host entry records entry point, version, capabilities, permissions and scope, data boundary, lifecycle, pause/resume/cancel, health, evidence, degradation, and rollback. Reuse shared host capability before building a duplicate. Keep platform differences in adapters; incompatible adapters or unknown boundaries are `BLOCKED` / `DEGRADED`.
+
+### 14 — Optional Model Self-Run
+
+Enable a bundled/local model or independent inference loop only when the shared host model is unavailable, or when evidence shows a benefit in local control, data sovereignty, latency, cost, or reliability. Declare model/runtime/version, maximum turns/tokens/time/cost, tools and minimum permissions, data boundary, Session/Memory, human approval, stop/cancel/pause/resume conditions, evidence, fallback, and rollback. If capability, authorization, budget, stop conditions, or evidence are missing, return `UNAVAILABLE` / `BLOCKED` / `CLARIFY`; never claim autonomous operation or start an unbounded loop.
 
 ## Simple-first constraint
 

@@ -1,6 +1,6 @@
 # 通用多 Skill 工作流编排
 
-> `sayelf-base` v1.1.2 的 L3 参考。它把目标编译为最小、可验证、可恢复的多 Skill/Agent 工作流，并支持通过统一契约接入共享 AI 平台或 Agent 能力；不代替单个 Skill 的专业规则，不实现执行引擎。
+> `sayelf-base` v1.1.3 的 L3 参考。它把目标编译为最小、可验证、可恢复的多 Skill/Agent 工作流，并支持通过统一契约接入多平台 Harness、共享宿主能力或可选模型自运行；不代替单个 Skill 的专业规则，不实现执行引擎。
 
 ## 1. 适用范围与边界
 
@@ -38,15 +38,15 @@ Goal
 
 一次运行只选择对当前 Goal 有实质贡献的 Skill 或共享能力。先根据真实交接依赖确定顺序，再决定串行、条件分支或并行；不得因 Skill/能力已安装、可调用或名称相似就自动纳入。API、MCP/连接器、CLI、插件和 Agent Endpoint 是适配器，不是新的业务能力身份。
 
-## 3. 组装原则 P14–P18
+## 3. 组装原则 O1–O5
 
-- **P14 — Registry-driven Assembly**：从已登记且有能力画像的 Skill / Capability Registry 中选择；画像至少能说明能力、触发范围、输入、输出及边界。未知能力不得臆测为已具备。
-- **P15 — Minimum Necessary Skill Set**：只有移除某个 Skill 会造成明确的能力、证据、验证或交付物缺口时，才将它纳入本次运行。
-- **P16 — Dependency-first Ordering**：依据输入与交接依赖建立有向依赖图，确定串行或条件顺序；不使用任意固定编号代替依赖分析。
-- **P17 — Safe Parallelism**：只有分支之间不存在未解决的数据或状态依赖，且每个分支输出能独立验证时才允许并行。否则串行执行或先补依赖。
-- **P18 — Result-driven Assembly**：以当前 Goal 要求的 Work Results 是否全部产生并通过验收来判断工作流是否闭合；“所有 Skill 都跑过”不是完成标准。
+- **O1 — Registry-driven Assembly**：从已登记且有能力画像的 Skill / Capability Registry 中选择；画像至少能说明能力、触发范围、输入、输出及边界。未知能力不得臆测为已具备。
+- **O2 — Minimum Necessary Skill Set**：只有移除某个 Skill 会造成明确的能力、证据、验证或交付物缺口时，才将它纳入本次运行。
+- **O3 — Dependency-first Ordering**：依据输入与交接依赖建立有向依赖图，确定串行或条件顺序；不使用任意固定编号代替依赖分析。
+- **O4 — Safe Parallelism**：只有分支之间不存在未解决的数据或状态依赖，且每个分支输出能独立验证时才允许并行。否则串行执行或先补依赖。
+- **O5 — Result-driven Assembly**：以当前 Goal 要求的 Work Results 是否全部产生并通过验收来判断工作流是否闭合；“所有 Skill 都跑过”不是完成标准。
 
-## 3.1 共享能力原则 C1–C8
+## 3.1 共享能力原则 C1–C11
 
 - **C1 — Capability as a Plug-in**：共用 AI 平台、Agent、模型、工具、记忆、审批、评测、策略、缓存、调度和追踪作为可插拔共享能力；核心只依赖语义契约。
 - **C2 — Transport-neutral Contract**：本地实现、脚本、API、MCP/连接器、CLI、插件和 Agent Endpoint 都是可替换传输/部署层；更换适配器不改变能力语义、权限、数据边界或验收规则。
@@ -57,8 +57,10 @@ Goal
 - **C7 — Fail-closed and Local Fallback**：能力、适配器、版本、权限、数据分类或证据不明时阻断/降级；仅使用已验证的本地确定性回退，不伪造空成功。
 - **C8 — Evidence and Sovereignty**：记录提供方、适配器、版本、调用 ID、结果版本、实际状态变化、数据边界、验收和下一检查；本地/内部/敏感/受限/未知数据不得因 API、MCP、CLI 或插件存在而自动外发。
 - **C9 — Local Render First**：图像、3D、视频和其他可确定性渲染优先使用本地代码或本地引擎；只有本地质量、性能或能力不足且证据充分时，才选择模型/远程适配器，并记录不足原因、质量/延迟/成本、数据边界、版本和回退路径。
+- **C10 — Multi-Harness Host Matrix**：同一核心能力接入多个 Harness 时，核心语义、输入输出、权限、数据边界、验收和证据结构保持一致；每个平台登记入口、版本、能力、权限、生命周期、暂停/恢复/取消、健康、降级和回滚。共享宿主能力优先复用，平台差异只留在适配器；不兼容或边界未知时返回 `BLOCKED` 或 `DEGRADED`。
+- **C11 — Optional Model Self-Run**：仅在共享宿主模型不可用，或自运行具有可验证的本地控制、数据主权、延迟、成本或可靠性收益时启用；必须声明运行时、最大轮次/Token/时间/成本预算、工具与最小权限、数据边界、Session/Memory、人工批准、停止/取消/恢复、证据、回退和回滚。不满足时返回 `UNAVAILABLE` / `BLOCKED` / `CLARIFY`，不得声称自主运行或启动无限循环。
 
-共享能力的最小调用链为：`DISCOVER → MATCH → AUTHORIZE → INVOKE → VERIFY → RECORD → VERSION / DEPRECATE`。字段和适配器最低契约见 `references/shared-capability-contract.md`；API、MCP、CLI 和插件调用均不得绕过 Tool Guardrail。
+共享能力的最小调用链为：`DISCOVER → MATCH → AUTHORIZE → INVOKE → VERIFY → RECORD → VERSION / DEPRECATE`。字段和适配器最低契约见 `references/shared-capability-contract.md`；API、MCP、CLI、插件和多平台 Harness 调用均不得绕过 Tool Guardrail，C11 自运行也不得绕过共享能力契约或 Convergence Gate。
 
 ## 3.2 Agent 分工工作流：最小分工决策
 
@@ -117,15 +119,15 @@ Goal
 
 未跑过的步骤、未验证的模式和未上线的能力必须明确标记 `未验证`；设计存在不等于执行存在，执行存在不等于验收通过。
 
-## 4. 执行前组装验证 P19–P24
+## 4. 执行前组装验证 P19–P21 + O6–O8
 
 **P19 — Assembly Before Execution**：任何自动生成或人工拼装的工作流都必须先验证，不能因“结构看起来可运行”便开始执行。至少检查：
 
 1. **P20 — Coverage Validation**：每项必需目标、能力和 Work Result 都有唯一负责 Skill，或有明确 Human Gate；未覆盖项必须阻断或澄清。
 2. **P21 — No Redundant Skill**：每个已选 Skill 都能说明其关闭的具体缺口；冗余 Skill 应移除。
-3. **P22 — Handoff Integrity**（与 P16 依赖排序配套）：每条依赖边说明上游输出/版本、交接状态、验收条件及下游消费者。
-4. **P23 — Parallel Safety Validation**（落实 P17）：验证没有未满足的输入、数据或共享状态依赖，并且每个并行输出可独立验收。
-5. **P24 — Deliverable Closure**（落实 P18）：每项 Required Work Result 都有生产者、可检验的验收规则和可追溯来源；缺一项不得判定工作流可执行。
+3. **O6 — Handoff Integrity**（与 O3 依赖排序配套）：每条依赖边说明上游输出/版本、交接状态、验收条件及下游消费者。
+4. **O7 — Parallel Safety Validation**（落实 O4）：验证没有未满足的输入、数据或共享状态依赖，并且每个并行输出可独立验收。
+5. **O8 — Deliverable Closure**（落实 O5）：每项 Required Work Result 都有生产者、可检验的验收规则和可追溯来源；缺一项不得判定工作流可执行。
 6. **恢复范围**：标出有效检查点、失败影响范围与可局部重跑的依赖子图；无法安全恢复时先澄清，不做盲目重跑。
 
 `Assembly Verdict`（组装验证结论）输出 `PASS`、`NEEDS_REVIEW` 或 `BLOCKED`：
@@ -191,9 +193,9 @@ Goal
 
 ## 8. 共享能力接入与非目标
 
-多 Skill 工作流选择共享能力时，先在 Capability Registry 中匹配能力契约，再选择适配器；不要把 API、MCP/连接器、CLI、插件或 Agent Endpoint 直接当成新的 Skill。适配器必须携带能力身份、版本、Schema、权限/作用域、数据分类、健康、证据和回退声明，并按 `DISCOVER → MATCH → AUTHORIZE → INVOKE → VERIFY → RECORD` 执行。
+多 Skill 工作流选择共享能力时，先在 Capability Registry 中匹配能力契约，再选择适配器；不要把 API、MCP/连接器、CLI、插件、Harness 适配器或 Agent Endpoint 直接当成新的 Skill。适配器必须携带能力身份、版本、Schema、权限/作用域、数据分类、健康、证据和回退声明，并按 `DISCOVER → MATCH → AUTHORIZE → INVOKE → VERIFY → RECORD` 执行。
 
-一个本地 Skill 要不要 API 化、MCP 化、CLI 化或插件化，按真实复用、隔离、权限、部署和跨进程需求判定。只在有明确收益且通过 Step 0 时增加适配器；保持本地运行的 Skill 仍需契约可接入，但不被强制网络化。共享 AI 平台或 Agent 能力不可用、未授权、版本不兼容或 POST CHECK 失败时，工作流只能进入 `BLOCKED` / `DEGRADED` 或已验证的本地回退。
+一个本地 Skill 要不要 API 化、MCP 化、CLI 化、插件化或接入多个 Harness，按真实复用、隔离、权限、部署和跨进程需求判定。只在有明确收益且通过 Step 0 时增加适配器；保持本地运行的 Skill 仍需契约可接入，但不被强制网络化。共享 AI 平台、共享宿主能力或可选自运行模型不可用、未授权、版本不兼容或 POST CHECK 失败时，工作流只能进入 `BLOCKED` / `DEGRADED` 或已验证的本地回退。
 
 ## 9. 普通用户结果视图与非目标
 
