@@ -15,7 +15,7 @@
   "base_edge_convergence_001": "Convergence Gate 判定 = NOT_CONVERGED：计划中 2 项为 missing 未处理，且 1 项 unrequested 未删除也无授权 → 不得 handoff、不得报完成。",
   "base_shared_capability_001": "Shared Capability：以 provider-neutral 能力契约接入；Skill保持语义契约，API/MCP/CLI/插件/Agent Endpoint只是可替换适配器。先做能力发现与版本/权限检查，经 PRE CHECK → EXECUTE → POST CHECK 验证；能力可用不等于已授权，失败时走 blocked/degraded 和已验证本地回退。",
   "base_edge_shared_capability_001": "blocked：能力可用不等于已授权。版本、权限、数据边界和状态证据不明，POST CHECK 未通过 → 隔离结果，不得写入下游，回退到已验证路径。",
-  "base_dynamic_principles_001": "Principle Registry：原则数量不固定。P01-P14 是当前基线，不是固定十四项；先识别触发条件，再按触发条件生成并记录 Principle Profile；本任务的本地低风险原则为 mandatory，外部 API/敏感数据原则为 conditional，确有证据不适用的项才可 not_applicable；范围变化后自动调整、重新计算并记录。",
+  "base_dynamic_principles_001": "Principle Registry：原则数量不固定。P01-P15 是当前基线，不是固定十五项；先识别触发条件，再按触发条件生成并记录 Principle Profile；本任务的本地低风险原则为 mandatory，外部 API/敏感数据原则为 conditional，确有证据不适用的项才可 not_applicable；范围变化后自动调整、重新计算并记录。",
   "base_edge_dynamic_principles_001": "阻断：动态原则不允许删除安全不变量。不得删除权限、数据主权、证据、收敛和回滚要求；这些检查必须 fail-closed；证据不足只能 CLARIFY 或 STOP，不得 GO。",
   "base_agent_division_001": "分工门控通过：真实重复任务=每日邮件汇总，模式=Sequential。角色输入输出逐行声明，并写明工具边界、禁止事项；通信只传约定字段；Session 保存本轮状态，Memory Bank 只保存已验证的跨会话事实；已知单一接口用函数/API，多个后端共用协议才用 MCP；Loop 若出现必须有退出条件和次数上限；未验证步骤明确标记，最后按验收标准检查。",
   "base_edge_agent_division_001": "不做 agent：这是一次已知天气查询，一次工具调用即可，具体使用函数/API。不得拆五个 Agent，不得建立无退出条件的 Loop，也不得把单一接口包装成 MCP。",
@@ -23,5 +23,7 @@
   "base_edge_access_surfaces_render_001": "阻断 blocked：本地可完成的图像/3D 渲染必须先走本地代码；CLI 不是授权边界，凭证禁止放入 argv；模型/Harness 插件缺少权限、数据出境批准或证据时不得执行。必须经 PRE CHECK → EXECUTE → POST CHECK，失败则隔离、回退本地路径，不得伪装成功。",
   "base_multiharness_selfrun_001": "P13：底座只做能力发现、授权与接口预留，以适配矩阵登记多平台 Harness；向上路由 sayelf-mcp-bridge，向下路由 sayelf-llm-gateway，优先复用共享宿主能力且不复制专门 Skill 实现。P14：自运行是可选边界，仅在宿主模型不可用或有证据收益时启用，必须声明 runtime、预算、工具权限、数据边界、停止条件、证据和回退；条件不满足返回 UNAVAILABLE/BLOCKED。",
   "base_edge_multiharness_selfrun_001": "阻断 BLOCKED：多平台 Harness 逐一登记适配矩阵和最小权限，先复用共享宿主能力；自运行缺少预算、停止条件、人工批准或数据边界，必须 fail-closed，不得无限循环或任意上传。",
-  "base_edge_adapter_ownership_001": "阻断 BLOCKED：sayelf-base 只预留接口与契约，不得复制实现；向上 Harness/MCP 登记路由 sayelf-mcp-bridge，向下模型调用路由 sayelf-llm-gateway；缺少授权、数据边界或证据时 fail-closed。"
+  "base_edge_adapter_ownership_001": "阻断 BLOCKED：sayelf-base 只预留接口与契约，不得复制实现；向上 Harness/MCP 登记路由 sayelf-mcp-bridge，向下模型调用路由 sayelf-llm-gateway；缺少授权、数据边界或证据时 fail-closed。",
+  "base_code_quality_001": "P15：先记录基线，再用最小适用的确定性工具和质量工具执行检查→修复→重跑，覆盖静态/类型检查、测试、复杂度/CRAP、依赖边界或突变测试；CRAP/突变只是带基线的质量信号，不是单独证明。仅在职责、依赖或独立验收有收益时拆分多 Agent；人工架构审查负责边界，架构边界和最终提升由人类/明确门禁持有，最后必须通过 Convergence。",
+  "base_edge_code_quality_001": "阻断/UNVERIFIED：P15 要求确定性工具，单一 CRAP 分数不能替代静态检查、测试、架构审查和安全门禁；证据未闭合不得 handoff 或宣称 CONVERGED，必须完成确定性检查→修复→重跑并记录人工审查。"
 }

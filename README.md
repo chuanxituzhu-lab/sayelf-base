@@ -1,6 +1,6 @@
 # SAYELF Shared Foundation / SAYELF 共享总底座
 
-**Version / 版本: 1.1.4** · **Codex Skill** · **Provider-neutral / 不绑定模型或运行时供应商**
+**Version / 版本: 1.1.5** · **Codex Skill** · **Provider-neutral / 不绑定模型或运行时供应商**
 
 一个面向 Codex 与工程型 AI 工作的共享底座：把立项判断、动态原则选择、工具调用安全、多 Skill 编排、实现验收与交接收敛成一套可复用、可验证的门禁。
 
@@ -16,9 +16,9 @@ A shared foundation for Codex and engineering-oriented AI work. It combines evid
 
 ### 2. Dynamic principles：原则数量按任务调整 / Adapt principles to the task
 
-**中文：** 底座原则数量不固定。`P01–P14` 只是当前基线注册项；系统根据任务、数据、权限、破坏性风险、交付阶段和证据需求生成最小 `Principle Profile`，用 `mandatory`、`conditional`、`not_applicable`、`blocked` 标记。新增或移除必须可解释，不能删除权限、数据主权、fail-closed、证据、收敛、版本和回滚等安全不变量。
+**中文：** 底座原则数量不固定。`P01–P15` 只是当前基线注册项；系统根据任务、数据、权限、破坏性风险、交付阶段和证据需求生成最小 `Principle Profile`，用 `mandatory`、`conditional`、`not_applicable`、`blocked` 标记。新增或移除必须可解释，不能删除权限、数据主权、fail-closed、证据、收敛、版本和回滚等安全不变量。
 
-**English:** The foundation does not have a fixed-size principle list. `P01–P14` are the current baseline registry entries only. Each task derives a minimal `Principle Profile` using `mandatory`, `conditional`, `not_applicable`, and `blocked`; additions and removals require evidence, and immutable authorization, data-sovereignty, fail-closed, evidence, convergence, versioning, and rollback invariants remain in force.
+**English:** The foundation does not have a fixed-size principle list. `P01–P15` are the current baseline registry entries only. Each task derives a minimal `Principle Profile` using `mandatory`, `conditional`, `not_applicable`, and `blocked`; additions and removals require evidence, and immutable authorization, data-sovereignty, fail-closed, evidence, convergence, versioning, and rollback invariants remain in force.
 
 ### 3. Build gates：最小、可追溯的工程决策 / Minimal, traceable engineering
 
@@ -49,6 +49,12 @@ A shared foundation for Codex and engineering-oriented AI work. It combines evid
 **中文：** 同一 Agent/Skill 接入多个 Harness 时，底座只登记 host adapter matrix 和 `adapter_owner`，不直接写入宿主配置；优先复用共享宿主能力，向上路由 `sayelf-mcp-bridge`。大模型调用和可选自运行向下路由 `sayelf-llm-gateway`；底座只声明 runtime、预算、工具权限、数据边界、人工批准、停止/取消/恢复、证据与回退。不满足时返回 `UNAVAILABLE` / `BLOCKED` / `CLARIFY`，不得在底座内复制实现或无限循环。
 
 **English:** When the same Agent or Skill connects to multiple Harnesses, the foundation records a host adapter matrix and `adapter_owner` but does not write host configuration; reuse shared host capabilities first and route upward integration to `sayelf-mcp-bridge`. Model calls and optional self-run route downward to `sayelf-llm-gateway`; the foundation declares runtime, budgets, tool permissions, data boundaries, human approval, stop/cancel/pause/resume, evidence, and fallback only. Unknown or unmet conditions return `UNAVAILABLE` / `BLOCKED` / `CLARIFY`; the foundation never duplicates adapters or permits an unbounded loop.
+
+### 6.3 AI-era code quality：确定性工具优先 / Deterministic quality enforcement
+
+**中文：** P15 将可读命名、单一职责、窄接口、少副作用、简单优先和模块边界纳入共享底座；对 AI 生成或修改的代码，优先用格式化、静态/类型检查、测试、复杂度/CRAP、依赖边界、突变测试或等价本地工具形成“检查 → 修复 → 重跑”。CRAP/突变结果只是带基线的复杂度或测试强度信号，不是单独质量证明；工具缺失、报告不完整或架构边界未审查时不得宣称通过、交接或 `CONVERGED`。只有职责、依赖或独立验收有真实收益时才拆多 Agent，架构边界与最终提升由人类/明确门禁持有。
+
+**English:** P15 adds intention-revealing names, single responsibility, narrow interfaces, limited side effects, simple-first design, and clear module boundaries to the shared foundation. For AI-generated or AI-modified code, prefer a local `Check → Repair → Re-run` loop using formatters, static/type checks, tests, complexity/CRAP, dependency checks, mutation testing, or equivalent tools. CRAP and mutation results are baseline-aware signals of complexity or test strength, not standalone proof of quality; missing tools, incomplete reports, or unreviewed architecture boundaries block claims of pass, handoff, or `CONVERGED`. Split into multiple Agents only when distinct responsibilities, dependencies, or independent acceptance provide real value; humans or explicit gates own architecture boundaries and final promotion.
 
 ### 7. Multi-Skill orchestration：最小编排与证据链 / Minimal orchestration with evidence
 
@@ -87,9 +93,9 @@ tests/                           # Golden/edge cases, sample outputs, and local 
 
 ## 版本 / Version
 
-**v1.1.4** narrows P10/P11/P13/P14 to interface reservations and adapter ownership: upward Harness/MCP integration is delegated to `sayelf-mcp-bridge`, downward model integration is delegated to `sayelf-llm-gateway`; the foundation does not duplicate host registration or provider clients. It retains P12 local-render-first placement, the adaptive Principle Registry, bounded Agent division workflow, evidence-gated `Execution Verdict`, provider-neutral Tool Guardrail Contract, generic multi-Skill orchestration, and the Convergence Gate before handoff.
+**v1.1.5** adds P15 for AI-era code quality and deterministic verification: readable structure, narrow boundaries, tool-first `Check → Repair → Re-run`, and conditional quality-agent pipelines; CRAP and mutation scores remain evidence signals rather than standalone proof. It retains the interface-only P10/P11/P13/P14 boundaries: upward Harness/MCP integration is delegated to `sayelf-mcp-bridge`, downward model integration is delegated to `sayelf-llm-gateway`; the foundation does not duplicate host registration or provider clients. It also retains P12 local-render-first placement, the adaptive Principle Registry, bounded Agent division workflow, evidence-gated `Execution Verdict`, provider-neutral Tool Guardrail Contract, generic multi-Skill orchestration, and the Convergence Gate before handoff.
 
-**v1.1.4** 将 P10/P11/P13/P14 收窄为接口预留与适配器归属：向上的 Harness/MCP 接入交给 `sayelf-mcp-bridge`，向下的大模型接入交给 `sayelf-llm-gateway`；底座不复制宿主登记或供应商客户端实现。同时保留 P12 本地渲染优先、动态原则注册表、按任务生成的原则 Profile、有界 Agent 分工工作流、基于证据的 `Execution Verdict`、供应商中立的 Tool Guardrail Contract、通用多 Skill 编排，以及交接前的 Convergence Gate。
+**v1.1.5** 新增 P15 AI 时代代码质量与确定性验证：可读结构、窄边界、工具优先的“检查 → 修复 → 重跑”闭环，以及按条件启用的质量分工流水线；CRAP 与突变分数只是证据讯号，不是单独证明。同时保留 P10/P11/P13/P14 的接口预留与适配器归属：向上的 Harness/MCP 接入交给 `sayelf-mcp-bridge`，向下的大模型接入交给 `sayelf-llm-gateway`；底座不复制宿主登记或供应商客户端实现。也保留 P12 本地渲染优先、动态原则注册表、按任务生成的原则 Profile、有界 Agent 分工工作流、基于证据的 `Execution Verdict`、供应商中立的 Tool Guardrail Contract、通用多 Skill 编排，以及交接前的 Convergence Gate。
 
 ## License
 

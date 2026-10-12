@@ -106,7 +106,7 @@
     },
     "expected_output_keywords": ["Principle Registry", "mandatory", "conditional", "not_applicable", "自动调整", "不固定"],
     "required_steps": ["识别触发条件", "记录 Principle Profile", "重新计算"],
-    "ground_truth": "P01-P14 只是当前基线，不是固定十四项；按触发器、依赖和证据生成最小原则集，新增或移除必须可解释且不删除安全不变量",
+    "ground_truth": "P01-P15 只是当前基线，不是固定十五项；按触发器、依赖和证据生成最小原则集，新增或移除必须可解释且不删除安全不变量",
     "constraints": {"tone": "结构化", "max_length": 1000}
   },
   {
@@ -146,6 +146,19 @@
     "expected_output_keywords": ["P13", "多平台 Harness", "共享宿主能力", "适配矩阵", "接口预留", "sayelf-mcp-bridge", "sayelf-llm-gateway", "P14", "可选", "预算", "停止条件", "UNAVAILABLE"],
     "required_steps": ["能力发现", "授权", "路由", "回退"],
     "ground_truth": "P13 只在底座声明跨 Harness 的 host adapter matrix 与共享宿主接口，向上路由 sayelf-mcp-bridge，不复制宿主登记实现；模型向下路由 sayelf-llm-gateway。P14 只声明自运行边界，必须有预算、停止条件、证据和回退，不满足时 UNAVAILABLE/BLOCKED",
+    "constraints": {"tone": "结构化", "max_length": 1400}
+  },
+  {
+    "id": "base_code_quality_001",
+    "category": "底座原则 · AI 代码质量与确定性验证",
+    "type": "golden",
+    "input": {
+      "request": "AI 生成了一组复杂代码，要求共享底座给出质量闭环，但不要绑定某个供应商或把 CRAP/突变分数当成唯一证明",
+      "evidence": "可以运行本地静态检查、测试、复杂度/突变工具，并由人审查架构边界"
+    },
+    "expected_output_keywords": ["P15", "确定性工具", "检查", "修复", "重跑", "CRAP", "突变", "基线", "架构边界", "人类"],
+    "required_steps": ["记录基线", "质量工具", "人工架构审查", "Convergence"],
+    "ground_truth": "P15 要求代码质量优先由确定性工具形成检查→修复→重跑闭环；CRAP/突变是带基线的复杂度/测试强度信号，不是单独质量证明；多 Agent 只在职责或独立验收有收益时启用，架构边界与最终提升由人类/门禁持有",
     "constraints": {"tone": "结构化", "max_length": 1400}
   }
 ]

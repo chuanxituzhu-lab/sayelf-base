@@ -2,7 +2,7 @@
 
 > 本文件是 `sayelf-base` 的 **L3 动态原则注册表详版**，用于展开说明主 Skill §2–§3。
 > 权威顺序：安装目录中的 `SKILL.md` 为唯一入口；Execution Verdict、Tool Guardrail Contract、Convergence 与任何冲突均以主 Skill 为准。
-> 原独立构建原则 Skill 已并入 `sayelf-base`，不再作为单独触发入口。当前 P01–P14 只是基线种子，原则数量可随任务证据增减。
+> 原独立构建原则 Skill 已并入 `sayelf-base`，不再作为单独触发入口。当前 P01–P15 只是基线种子，原则数量可随任务证据增减。
 
 # Sayelf Dynamic Build Principles
 
@@ -171,11 +171,23 @@ The decision record must state the local insufficiency reason, quality/latency/c
 
 ### 13 — Multi-Harness and Shared Host Capability
 
-When an Agent or Skill connects to two or more Harnesses, or reuses host-provided capabilities, keep the Core provider-neutral and declare a host adapter matrix. Each host entry records entry point, version, capabilities, permissions and scope, data boundary, lifecycle, pause/resume/cancel, health, evidence, degradation, and rollback. This is a contract and routing boundary only; actual host registration is delegated to `sayelf-mcp-bridge` or another explicitly selected adapter Skill. Reuse shared host capability before building a duplicate; incompatible adapters or unknown boundaries are `BLOCKED` / `DEGRADED`.
+When an Agent or Skill must connect to two or more AI Harnesses, or reuse host-provided capabilities, keep the Core provider-neutral and define a host adapter matrix. Each host entry declares its entry point, version, capabilities, permission and scope, data boundary, lifecycle, pause/resume/cancel behavior, health, evidence, degradation, and rollback. This is a contract and routing boundary only; actual host registration is delegated to `sayelf-mcp-bridge` or another explicitly selected adapter Skill.
+
+Reuse registered shared host capabilities before creating local duplicates. Host differences stay in adapters; core semantics, input/output, authorization, evidence, acceptance, and convergence must remain stable across hosts. A host being installed, reachable, healthy, or authenticated is not authorization. Unknown compatibility, permission, data boundary, evidence, or lifecycle behavior is `blocked` / `degraded` and must fail closed.
 
 ### 14 — Optional Model Self-Run
 
-Enable a bundled/local model or independent inference loop only when the shared host model is unavailable, or when evidence shows a benefit in local control, data sovereignty, latency, cost, or reliability. The foundation defines the boundary only; model execution is routed through `sayelf-llm-gateway` or another explicitly selected model Skill. Declare model/runtime/version, maximum turns/tokens/time/cost, tools and minimum permissions, data boundary, Session/Memory, human approval, stop/cancel/pause/resume conditions, evidence, fallback, and rollback. If capability, authorization, budget, stop conditions, or evidence are missing, return `UNAVAILABLE` / `BLOCKED` / `CLARIFY`; never claim autonomous operation or start an unbounded loop.
+An Agent or Skill may bring its own/local model or independent inference loop only when the shared host model is unavailable, or when self-run has evidence-backed benefits in local control, data sovereignty, latency, cost, or reliability. Self-run is optional, never implied by the Skill contract, and must not replace a registered shared capability without Step 0 evidence. The foundation defines the boundary only; model execution is routed through `sayelf-llm-gateway` or another explicitly selected model Skill.
+
+The self-run contract declares the model and runtime, adapter and version, maximum turns/tokens/time/cost, tools and minimum permissions, data boundary, Session/Memory scope, human approval, stop/cancel/resume conditions, call and result evidence, fallback, and rollback. If the model/runtime cannot self-run, authorization is missing, a budget is exceeded, a stop condition is absent, or evidence is incomplete, return `UNAVAILABLE` / `BLOCKED` / `CLARIFY`; never claim autonomy and never permit an unbounded loop.
+
+### 15 — AI-era Code Quality and Deterministic Verification
+
+Keep code understandable and bounded: use intention-revealing, pronounceable and searchable names; small single-purpose functions; one level of abstraction at a time; few arguments and explicit side effects; clear module boundaries; deep modules with narrow interfaces; and comments that explain why rather than restating what. Apply DRY, KISS, YAGNI, SOLID and the Boy Scout Rule as review heuristics, not as permission to add abstractions. Function length, argument count and complexity thresholds are tunable signals, not universal hard rules across languages or domains.
+
+For AI-generated or AI-modified code, prefer deterministic enforcement over longer prompt rules. Use the smallest applicable set of formatter, linter, type/static checker, unit or acceptance tests, complexity/CRAP analysis, dependency/architecture checks, mutation testing, or equivalent local tools. The normal quality loop is **Check → Repair → Re-run**, with the tool result and changed baseline recorded as evidence. Use a short-lived multi-agent quality pipeline only when separate responsibilities, dependency order, parallel benefit, or independent acceptance are real; otherwise keep one agent and one tool loop.
+
+Architecture boundaries, risk acceptance, public release scope, and final promotion remain human-owned or explicitly gate-owned. CRAP and mutation results are signals about complexity and test strength, not standalone proof of code quality; account for baseline, changed scope, equivalent mutants, uncovered behavior, security gates, and semantic review. A missing tool or incomplete report is `UNAVAILABLE` / `UNVERIFIED`, not a pass. Do not claim a clean result, handoff, or `CONVERGED` state until the relevant quality evidence is present and the Convergence Gate is closed.
 
 ## Simple-first constraint
 

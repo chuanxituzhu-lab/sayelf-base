@@ -1,14 +1,14 @@
 ---
 name: sayelf-base
-description: "Use when deciding or delivering changes to Agents, Skills, tools, systems, features, data flows, evaluations, prompts, shared AI capability contracts, API/MCP/CLI/plugin interface reservations, multi-platform Harness interface contracts, shared host capability boundaries, optional model self-run boundaries, agent-division workflows, local image/3D rendering, or FDE deployments. Provides build gates, local-data protection, provider-neutral runtime guardrails, capability contracts, workflow evidence, convergence, and delivery standards. Chinese triggers: 总底座 / 底座 / 共享底座 / 走底座 / 构建门禁 / 共享能力 / 接口预留 / 多平台Harness / 共享宿主能力 / 大模型自运行 / 分工工作流 / 多Agent分工 / MCP和API / CLI接口 / 本地渲染优先 / 图像渲染 / 3D渲染 / 记忆和Loop / AI平台接入 / Agent接入 / API化 / 插件化 / FDE标准. Not for ordinary consultation, non-engineering writing, or routine SaaS configuration."
+description: "Use when deciding or delivering changes to Agents, Skills, tools, systems, features, data flows, evaluations, prompts, shared AI capability contracts, API/MCP/CLI/plugin interface reservations, multi-platform Harness interface contracts, shared host capability boundaries, optional model self-run boundaries, agent-division workflows, AI-era code quality, deterministic verification, local image/3D rendering, or FDE deployments. Provides build gates, local-data protection, provider-neutral runtime guardrails, capability contracts, workflow evidence, convergence, and delivery standards. Chinese triggers: 总底座 / 底座 / 共享底座 / 走底座 / 构建门禁 / 共享能力 / 共享宿主能力 / 多平台Harness / 大模型自运行 / 接口预留 / 分工工作流 / 多Agent分工 / MCP和API / CLI接口 / 代码质量 / Clean Code / CRAP / 突变测试 / 确定性验证 / 本地渲染优先 / 图像渲染 / 3D渲染 / 记忆和Loop / AI平台接入 / Agent接入 / API化 / 插件化 / FDE标准. Not for ordinary consultation, non-engineering writing, or routine SaaS configuration."
 metadata:
-  short-description: 共享总底座（构建门禁 + 共享能力契约 + 多平台 Harness 接口预留 + 大模型接口预留 + 自运行边界 + 分工编排 + FDE 内容标准 + API/MCP/CLI + 本地渲染优先）
-  aliases: [总底座, 底座, 共享底座, 走底座, 按底座来, 构建门禁, 共享能力, 多平台Harness, 共享宿主能力, 大模型自运行, 分工工作流, 多Agent分工, MCP和API, CLI接口, 本地渲染优先, 图像渲染, 3D渲染, 记忆和Loop, AI平台接入, Agent接入, API化, 插件化, FDE标准]
+  short-description: 共享总底座（构建门禁 + 共享能力契约 + 多平台 Harness 接口预留 + 大模型接口预留 + 自运行边界 + API/MCP/CLI + AI 代码质量与确定性验证 + 本地渲染优先）
+  aliases: [总底座, 底座, 共享底座, 走底座, 按底座来, 构建门禁, 共享能力, 共享宿主能力, 多平台Harness, 大模型自运行, 分工工作流, 多Agent分工, MCP和API, CLI接口, 代码质量, Clean Code, CRAP, 突变测试, 确定性验证, 本地渲染优先, 图像渲染, 3D渲染, 记忆和Loop, AI平台接入, Agent接入, API化, 插件化, FDE标准]
 ---
 
 # SAYELF 共享总底座
 
-> 当前内容版本：1.1.4。版本信息保留在正文，避免进入 Agent Skills 校验器不允许的 frontmatter 字段。
+> 当前内容版本：1.1.5。版本信息保留在正文，避免进入 Agent Skills 校验器不允许的 frontmatter 字段。
 
 > **调用名：`sayelf-base`**（斜杠调用 `/sayelf-base`）。口头说「总底座」「走底座」「按底座来」「构建门禁」「共享能力」「AI 平台接入」「Agent 接入」「API 化」「插件化」「FDE 标准」也应触发。
 
@@ -98,7 +98,7 @@ metadata:
 
 ### §2 核心构建原则（动态原则集摘要，完整版见 `references/build-principles.md`）
 
-原则数量不固定。`P01–P14` 是当前默认基线注册项，不是永久的十四项清单；任务会依据触发条件、数据/权限风险、交付阶段和所需证据，自动生成最小适用原则集（Principle Profile）。每个注册项至少记录 `id`、名称、适用范围、触发条件、依赖、不变量、所需证据、状态和版本。
+原则数量不固定。`P01–P15` 是当前默认基线注册项，不是永久的十五项清单；任务会依据触发条件、数据/权限风险、交付阶段和所需证据，自动生成最小适用原则集（Principle Profile）。每个注册项至少记录 `id`、名称、适用范围、触发条件、依赖、不变量、所需证据、状态和版本。
 
 原则状态只能明确记录为 `mandatory`（强制）、`conditional`（条件触发）、`not_applicable`（有证据证明不适用）或 `blocked`（缺证据/冲突/风险阻断）。先识别任务触发器，再匹配注册表、补齐依赖、锁定安全不变量，最后把本次原则 Profile 写入构建决策记录；任务变化时重新计算。新增原则以新注册项加入，移除原则必须有不适用证据且不得破坏不变量，不能为缩短文档而静默删除。
 
@@ -119,6 +119,7 @@ metadata:
 12. **本地渲染优先**：图像、3D、视频及其他可确定性实现的渲染/处理，优先采用本地代码或本地引擎；仅当本地设备在质量、性能或能力上有可验证不足，才通过共享能力契约接入模型或远程能力，并记录不足原因、质量/延迟/成本证据、适配器版本、数据边界和回退路径。不得仅为便利把可本地完成的确定性排版或渲染交给模型。
 13. **多平台 Harness 接口与共享宿主边界**：Agent/Skill 需要接入两个或以上 Harness，或需要复用宿主提供的能力时，底座只声明 provider-neutral 的宿主适配矩阵和共享能力契约：入口、版本、能力、权限、数据边界、生命周期、暂停/恢复/取消、健康、证据、降级和回滚。共享宿主能力优先复用，但实际登记/安装/撤销由 `sayelf-mcp-bridge` 等专门适配 Skill 承担；平台差异不得进入底座核心，边界未知时 fail-closed。
 14. **可选大模型自运行边界**：底座只声明自运行的可选契约，不实现模型调用或独立推理循环。只有共享宿主模型不可用，或通过 `sayelf-llm-gateway` 等专门模型 Skill 有可验证的本地控制、数据主权、延迟、成本或可靠性收益时，才可启用；必须声明模型/runtime、最大轮次/Token/时间/成本预算、工具与最小权限、数据边界、Session/Memory、人工批准、停止/取消/恢复、证据、回退和回滚。条件不足时返回 `UNAVAILABLE` / `BLOCKED` / `CLARIFY`，不得声称自主运行或放开无限循环。
+15. **AI 时代代码质量与确定性验证**：代码结构质量必须由可读命名、单一职责、窄接口、清晰模块边界、少副作用、DRY/KISS/YAGNI 和“留下比接手时更干净”共同约束；小函数、参数数量、复杂度等数值只是可调的审查信号，不得机械化成跨语言硬阈值。对 AI 生成或修改的代码，优先用格式化、类型/静态检查、单元/验收测试、复杂度/CRAP、架构依赖检查、突变测试或等价的确定性工具形成 `检查 → 修复 → 重跑` 闭环，工具证据优先于继续堆叠提示词。多 Agent 质量流水线只在职责、依赖或独立验收确有收益时启用；架构边界、风险接受和最终提升仍由人类/明确门禁持有。CRAP/突变分数是测试与复杂度信号，不得脱离基线、等价突变审查、代码语义和安全门禁单独宣称质量达标；工具不可用时必须标记 `UNAVAILABLE` / `UNVERIFIED`，不得伪造通过。
 
 **§2.1 Harness 最小契约**：任务输入与结果输出、能力发现、工具调用、状态与检查点、事件、暂停/恢复/取消、人工批准、错误与重试、用量、本地可查证据。核心不得依赖特定供应商的循环、事件结构或托管控制面。
 
@@ -127,6 +128,8 @@ metadata:
 共用 AI 平台、Agent、模型、会话、记忆、评测、审批、策略、缓存、调度和追踪等，统一视为**共享能力（Shared Capability）**。底座只定义稳定的 provider-neutral 能力契约和接口预留，不直接依赖供应商 SDK、密钥、Agent 循环、宿主注册逻辑或托管控制面。向上的 Harness/MCP 登记由 `sayelf-mcp-bridge` Skill 负责，向下的大模型调用由 `sayelf-llm-gateway` Skill 负责；二者都是可替换的专门适配层。
 
 **Skill 的结论**：Skill 必须“契约可接入、适配器可替换”，但不要求每个 Skill 都变成网络 API。单机、本地、低风险 Skill 可以继续以本地目录/脚本运行；当 Skill 需要跨项目复用、跨进程调用、接入共享 AI 平台或作为 Agent 能力暴露时，再通过 API、MCP、CLI 或插件适配器发布。API/MCP/CLI/插件化是传输与部署层，不改变 Skill 的语义身份、数据边界和验收规则。
+
+**多 Harness / 共享宿主结论**：同一 Agent/Skill 的核心语义、输入输出、权限、数据边界、验收和证据结构必须跨 Harness 保持一致；底座只登记接口与路由，不负责宿主写入。需要向上接入时路由到 `sayelf-mcp-bridge`，需要向下调用模型时路由到 `sayelf-llm-gateway`；自运行不能绕过共享能力契约、Tool Guardrail、人工批准或 Convergence Gate。
 
 **统一能力生命周期**：
 
@@ -141,10 +144,10 @@ DISCOVER → MATCH → AUTHORIZE → INVOKE → VERIFY → RECORD → VERSION / 
 - `access`：所需权限、最小作用域、租户/资源边界、人工批准条件、速率/用量限制；
 - `data`：输入/输出数据分类、允许的信任边界、是否允许外发、保留/删除要求；
 - `evidence`：调用 ID、结果版本、来源、检查结果、状态变化、错误/降级原因与下一检查；
-- `compatibility`：协议/Schema 兼容范围、依赖、健康状态、版本替换和回滚路径。
-- `execution`：宿主来源、Harness 列表、共享能力、自运行状态、模型/runtime、轮次/Token/时间/成本预算、工具权限、停止/取消/恢复条件与回退路径；`adapter_owner` 标明 `sayelf-mcp-bridge`、`sayelf-llm-gateway` 或其它专门 Skill；底座不实现适配器。
+- `compatibility`：协议/Schema 兼容范围、依赖、健康状态、版本替换和回滚路径；多平台 Harness 的适配范围。
+- `execution`：宿主能力来源、模型/运行时、是否允许自运行、预算、停止/取消/恢复条件、人工批准和回退路径；`adapter_owner` 标明 `sayelf-mcp-bridge`、`sayelf-llm-gateway` 或其它专门 Skill；底座不实现适配器，不具备条件时标 `UNAVAILABLE` / `BLOCKED`。
 
-**适配器边界**：API、MCP/连接器、CLI、插件、Harness 适配器和 Agent Endpoint 都是外部适配器；底座只声明其接口和证据要求，不复制 `sayelf-mcp-bridge` 的宿主登记实现，也不复制 `sayelf-llm-gateway` 的模型客户端实现。适配器不可用、能力未注册、版本不兼容、权限/数据边界未知或返回结构不完整时，必须 `blocked` / `degraded` / `UNAVAILABLE` 或回退本地确定性路径，不得伪装为成功。
+**适配器边界**：API、MCP/连接器、CLI、插件和 Agent Endpoint 都是外部适配器；底座只声明其接口和证据要求，不复制 `sayelf-mcp-bridge` 的宿主登记实现，也不复制 `sayelf-llm-gateway` 的模型客户端实现。适配器不可用、能力未注册、版本不兼容、权限/数据边界未知或返回结构不完整时，必须 `blocked` / `degraded` 或回退本地确定性路径，不得伪装为成功。
 
 **API / MCP / CLI / 插件化最低要求**：
 
@@ -273,14 +276,14 @@ python tests/eval_scorer.py --cases tests/golden-cases.json --outputs <outputs.j
 
 - Harness（运行器 / Agent 循环 / 编排器）是**可替换适配器**，位于核心之外，fail-closed：不得静默扩大权限、工具访问、遥测、持久化或数据出网。
 - 每一次工具调用必须通过 §2.2 的 **Tool Guardrail Contract**；PRE CHECK 未通过不得执行，POST CHECK 未通过不得接受输出、写入状态或交接。
-- 每一次共享能力调用必须通过 §2.3 的 **Shared Capability Contract** 和 §2.2 的工具门禁；能力发现、接口路由、API/MCP/CLI/插件、多平台 Harness 适配和 Agent 交接不得绕过 PRE CHECK / POST CHECK。
-- 共享能力（已注册工具、模型、Agent、会话、沙箱、缓存、状态、审批、策略护栏、调度、计量、追踪）先复用再自研；按稳定名称/版本/结构在运行时发现与协商，记录"哪个提供方、适配器和版本产出了哪个结果"。同一核心接入多平台 Harness 时使用适配矩阵，平台差异不进入核心。
-- API、MCP/连接器、CLI、插件或 Agent Endpoint 只是可替换接入面；核心不得直接导入供应商循环/SDK，不得把某一适配器的可用性当成共享能力的存在性。向上优先路由 `sayelf-mcp-bridge`，向下优先路由 `sayelf-llm-gateway`。
-- 任务状态与凭证隔离；只申请最小能力与最小作用域；共享能力不可用时必须走显式不可用/被拒/降级路径；P14 自运行也必须有预算、停止/取消/恢复条件、人工批准、数据边界、证据和回退，不得无限循环。
+- 每一次共享能力调用必须通过 §2.3 的 **Shared Capability Contract** 和 §2.2 的工具门禁；能力发现、接口路由、API/MCP/CLI/插件适配、多平台 Harness 适配和 Agent 交接不得绕过 PRE CHECK / POST CHECK。
+- 共享能力（已注册工具、模型、Agent、会话、沙箱、缓存、状态、审批、策略护栏、调度、计量、追踪）先复用再自研；按稳定名称/版本/结构在运行时发现与协商，记录"哪个提供方、适配器和版本产出了哪个结果"。
+- API、MCP/连接器、CLI、插件、Harness 适配器或 Agent Endpoint 只是可替换接入面；核心不得直接导入供应商循环/SDK，不得把某一适配器的可用性当成共享能力的存在性。向上优先路由 `sayelf-mcp-bridge`，向下优先路由 `sayelf-llm-gateway`。
+- 任务状态与凭证隔离；只申请最小能力与最小作用域；共享能力不可用时必须走显式 不可用/被拒/降级 路径，不得污染核心状态。
 - 敏感数据脱敏与权限校验在 Harness 主循环完成，Skill 内部只做基础校验。
 - 人工批准只授权同一工具、调用 ID、作用域与参数集合；批准等待期间若状态或参数改变，必须重新 PRE CHECK。
 - 统一出入参：所有 Skill 返回固定三层结构 `{code, msg, data}`。
-- Harness 不可用、被拒或返回不完整结构时：**回退本地确定性结果**，不得把失败当成"未发现问题"，不得损坏已有产物；`sayelf-mcp-bridge` 或 `sayelf-llm-gateway` 不可用时只能 `UNAVAILABLE` / `BLOCKED` 或回退，不得在底座内临时复制实现；工具 POST CHECK 失败时不得将结果写入后续上下文或 handoff 状态。
+- Harness 不可用、被拒或返回不完整结构时：**回退本地确定性结果**，不得把失败当成"未发现问题"，不得损坏已有产物；`sayelf-mcp-bridge` 或 `sayelf-llm-gateway` 不可用时只能 `UNAVAILABLE` / `BLOCKED` 或回退，不得在底座内临时复制实现；可选自运行模型未满足 P14 时不得放开无限循环；工具 POST CHECK 失败时不得将结果写入后续上下文或 handoff 状态。
 - 对 Harness 相关改动适用原则 06（观察→挑战→验证→灰度→提升）；对 prompts、traces、检查点、共享状态、工具输入输出适用原则 08（数据主权）。
 
 ## Validation before handoff
@@ -338,4 +341,4 @@ python tests/eval_scorer.py --cases tests/golden-cases.json --outputs <outputs.j
 
 ## 溯源
 
-溯源：本 Skill 合并了动态核心构建原则注册表（当前基线为 P01–P14）、共享能力与 API/MCP/CLI/插件化契约、多平台 Harness 接口与共享宿主边界、可选模型自运行边界、通用多 Skill 工作流编排、FDE 分工工作流、Skill 标准和 Agent 评测集（Standard）。实际向上 Harness 接入由 `sayelf-mcp-bridge` 承担，向下模型接入由 `sayelf-llm-gateway` 承担；本底座不复制二者实现。本目录中的 `references/`、`assets/templates/`、`scripts/` 与 `tests/` 是配套的 L3 资源；本 Skill 是当前唯一权威入口。
+溯源：本 Skill 合并了动态核心构建原则注册表（当前基线为 P01–P15）、共享能力与 API/MCP/CLI/插件化契约、多平台 Harness 接口与共享宿主边界、可选大模型自运行边界、AI 时代代码质量与确定性验证、通用多 Skill 工作流编排、FDE 分工工作流、Skill 标准和 Agent 评测集（Standard）。实际向上 Harness 接入由 `sayelf-mcp-bridge` 承担，向下模型接入由 `sayelf-llm-gateway` 承担；本底座不复制二者实现。本目录中的 `references/`、`assets/templates/`、`scripts/` 与 `tests/` 是配套的 L3 资源；本 Skill 是当前唯一权威入口。
