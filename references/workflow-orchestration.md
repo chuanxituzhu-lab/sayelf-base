@@ -1,6 +1,6 @@
 # 通用多 Skill 工作流编排
 
-> `sayelf-base` v1.1.3 的 L3 参考。它把目标编译为最小、可验证、可恢复的多 Skill/Agent 工作流，并支持通过统一契约接入多平台 Harness、共享宿主能力或可选模型自运行；不代替单个 Skill 的专业规则，不实现执行引擎。
+> `sayelf-base` v1.1.4 的 L3 参考。它把目标编译为最小、可验证、可恢复的多 Skill/Agent 工作流，并只预留多平台 Harness、共享宿主能力和模型接入契约；实际向上/向下适配由专门 Skill 承担，不代替单个 Skill 的专业规则，不实现执行引擎。
 
 ## 1. 适用范围与边界
 
@@ -49,9 +49,9 @@ Goal
 ## 3.1 共享能力原则 C1–C11
 
 - **C1 — Capability as a Plug-in**：共用 AI 平台、Agent、模型、工具、记忆、审批、评测、策略、缓存、调度和追踪作为可插拔共享能力；核心只依赖语义契约。
-- **C2 — Transport-neutral Contract**：本地实现、脚本、API、MCP/连接器、CLI、插件和 Agent Endpoint 都是可替换传输/部署层；更换适配器不改变能力语义、权限、数据边界或验收规则。
+- **C2 — Transport-neutral Contract**：本地实现、脚本、API、MCP/连接器、CLI、插件和 Agent Endpoint 都是可替换传输/部署层；底座只预留接口，不实现宿主登记器或模型客户端；更换适配器不改变能力语义、权限、数据边界或验收规则。
 - **C3 — Contract-ready, not network-mandatory**：Skill 必须可声明稳定输入/输出、状态、错误、证据和权限契约；只有跨进程、跨项目、共享平台或部署场景有明确收益时才选择 API、MCP、CLI 或插件，不强迫本地 Skill 网络化。
-- **C4 — Explicit Adapter Registry**：每个适配器声明名称、版本、提供方、入口、依赖、权限、健康检查、兼容范围、错误/降级和回滚；供应商专属字段不得渗入核心。
+- **C4 — Explicit Adapter Registry**：每个适配器声明名称、版本、提供方、入口、依赖、权限、健康检查、兼容范围、错误/降级和回滚，并声明 `adapter_owner`；向上 Harness/MCP 路由到 `sayelf-mcp-bridge`，向下模型路由到 `sayelf-llm-gateway`；供应商专属字段不得渗入核心。
 - **C5 — Capability Is Not Authorization**：已发现、已安装、健康、认证成功或模型声称可用，都不等于本次任务已授权；每次运行重新检查最小作用域和人工门禁。
 - **C6 — Contract and Version Compatibility**：Schema、协议、权限、数据边界或行为发生变化时建立新版本，协商后灰度；破坏性变化不得复用旧身份覆盖旧契约。
 - **C7 — Fail-closed and Local Fallback**：能力、适配器、版本、权限、数据分类或证据不明时阻断/降级；仅使用已验证的本地确定性回退，不伪造空成功。
@@ -60,7 +60,7 @@ Goal
 - **C10 — Multi-Harness Host Matrix**：同一核心能力接入多个 Harness 时，核心语义、输入输出、权限、数据边界、验收和证据结构保持一致；每个平台登记入口、版本、能力、权限、生命周期、暂停/恢复/取消、健康、降级和回滚。共享宿主能力优先复用，平台差异只留在适配器；不兼容或边界未知时返回 `BLOCKED` 或 `DEGRADED`。
 - **C11 — Optional Model Self-Run**：仅在共享宿主模型不可用，或自运行具有可验证的本地控制、数据主权、延迟、成本或可靠性收益时启用；必须声明运行时、最大轮次/Token/时间/成本预算、工具与最小权限、数据边界、Session/Memory、人工批准、停止/取消/恢复、证据、回退和回滚。不满足时返回 `UNAVAILABLE` / `BLOCKED` / `CLARIFY`，不得声称自主运行或启动无限循环。
 
-共享能力的最小调用链为：`DISCOVER → MATCH → AUTHORIZE → INVOKE → VERIFY → RECORD → VERSION / DEPRECATE`。字段和适配器最低契约见 `references/shared-capability-contract.md`；API、MCP、CLI、插件和多平台 Harness 调用均不得绕过 Tool Guardrail，C11 自运行也不得绕过共享能力契约或 Convergence Gate。
+共享能力的最小调用链为：`DISCOVER → MATCH → AUTHORIZE → ROUTE → INVOKE → VERIFY → RECORD → VERSION / DEPRECATE`。底座只完成契约发现与路由记录；向上 Harness/MCP 由 `sayelf-mcp-bridge` 等专门 Skill 承担，向下模型由 `sayelf-llm-gateway` 等专门 Skill 承担。字段和适配器最低契约见 `references/shared-capability-contract.md`；所有调用均不得绕过 Tool Guardrail，C11 自运行也不得绕过共享能力契约或 Convergence Gate。
 
 ## 3.2 Agent 分工工作流：最小分工决策
 
@@ -193,9 +193,9 @@ Goal
 
 ## 8. 共享能力接入与非目标
 
-多 Skill 工作流选择共享能力时，先在 Capability Registry 中匹配能力契约，再选择适配器；不要把 API、MCP/连接器、CLI、插件、Harness 适配器或 Agent Endpoint 直接当成新的 Skill。适配器必须携带能力身份、版本、Schema、权限/作用域、数据分类、健康、证据和回退声明，并按 `DISCOVER → MATCH → AUTHORIZE → INVOKE → VERIFY → RECORD` 执行。
+多 Skill 工作流选择共享能力时，先在 Capability Registry 中匹配能力契约，再选择适配器；不要把 API、MCP/连接器、CLI、插件、Harness 适配器或 Agent Endpoint 直接当成新的 Skill。底座只登记接口与适配器拥有者，不复制专门 Skill 的实现；适配器必须携带能力身份、版本、Schema、权限/作用域、数据分类、健康、证据和回退声明，并按 `DISCOVER → MATCH → AUTHORIZE → ROUTE → INVOKE → VERIFY → RECORD` 执行。
 
-一个本地 Skill 要不要 API 化、MCP 化、CLI 化、插件化或接入多个 Harness，按真实复用、隔离、权限、部署和跨进程需求判定。只在有明确收益且通过 Step 0 时增加适配器；保持本地运行的 Skill 仍需契约可接入，但不被强制网络化。共享 AI 平台、共享宿主能力或可选自运行模型不可用、未授权、版本不兼容或 POST CHECK 失败时，工作流只能进入 `BLOCKED` / `DEGRADED` 或已验证的本地回退。
+一个本地 Skill 要不要 API 化、MCP 化、CLI 化、插件化或接入多个 Harness，按真实复用、隔离、权限、部署和跨进程需求判定。只在有明确收益且通过 Step 0 时增加接口预留或路由声明；保持本地运行的 Skill 仍需契约可接入，但不被强制网络化。`sayelf-mcp-bridge`、`sayelf-llm-gateway` 或其它专门适配 Skill 不可用、未授权、版本不兼容或 POST CHECK 失败时，工作流只能进入 `BLOCKED` / `DEGRADED` / `UNAVAILABLE` 或已验证的本地回退，不得在底座内复制实现。
 
 ## 9. 普通用户结果视图与非目标
 

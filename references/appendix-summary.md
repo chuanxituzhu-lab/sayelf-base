@@ -19,5 +19,5 @@
 | **FDE 资产** | 4 类可回流资产 + 明确红线 |
 | **FDE 边界** | 4 个判断问题，高价值/高复杂/强合规场景 |
 | **FDE 成功** | 客户价值扩张 + 产品杠杆提升 |
-| **共享能力** | 共用 AI 平台 / Agent / 工具等通过 provider-neutral 契约，以本地实现、API、MCP/连接器、CLI、插件或 Agent Endpoint 可插拔接入；多平台 Harness 使用适配矩阵，优先复用共享宿主能力；能力可用不等于已授权 |
-| **Skill 接入** | Skill 必须契约可接入，但只有跨进程、跨项目、共享平台或独立部署有明确收益时才选择 API/MCP/CLI/插件；本地 Skill 不强制网络化；可选自运行必须有 runtime、预算、停止条件、证据和回退 |
+| **共享能力** | 底座只定义 provider-neutral 契约和接口预留；多平台 Harness 向上路由 `sayelf-mcp-bridge`，大模型向下路由 `sayelf-llm-gateway`；能力可用不等于已授权 |
+| **Skill 接入** | Skill 必须契约可接入，但本地 Skill 不强制网络化；底座不复制宿主登记器或模型客户端；可选自运行必须有 runtime、预算、停止条件、证据和回退 |

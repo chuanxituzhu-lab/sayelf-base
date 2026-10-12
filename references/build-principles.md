@@ -151,7 +151,7 @@ For text that must appear in a graphic (including cover headline/subhead), prefe
 
 ### 10 — Model / Capability Access Surface
 
-When an Agent or Skill needs a large model, model capability, or a shared capability across processes, first define a stable provider-neutral semantic contract and reserve the applicable access surfaces: **API, MCP, and CLI**. These are replaceable adapters, not new capability identities, and a Skill does not need to expose all three.
+When an Agent or Skill needs a large model or model capability, the foundation only defines a stable provider-neutral semantic contract and reserves applicable access surfaces: **API, MCP, and CLI**. These are interface reservations, not implementations or new capability identities, and a Skill does not need to expose all three. Downward model adaptation, credential isolation, provider checks, and `chat()` calls belong to the dedicated [`sayelf-llm-gateway`](https://github.com/chuanxituzhu-lab/sayelf-llm-gateway) Skill; `sayelf-base` must not duplicate them.
 
 At minimum, a CLI adapter declares a stable entry point, version, structured stdin/stdout (JSON preferred), stdout/stderr separation, exit codes, timeout/cancellation, idempotency or retry rules, minimum permissions and scope, data classification, call/evidence ID, and secure credential injection. Secrets must not be placed in command-line arguments. Unknown authorization, scope, data boundary, result structure, or evidence is `blocked` / `degraded`, never an implied success.
 
@@ -159,7 +159,7 @@ The API/MCP/CLI surface is selected by Step 0 based on reuse, isolation, deploym
 
 ### 11 — Harness Plugin Access Surface
 
-When an Agent or Skill must connect to an AI Harness or run as a host plugin, define a provider-neutral plugin contract and reserve a host-compatible **MCP, CLI, or plugin entry point**. The manifest or adapter record must declare entry, version, host compatibility, capabilities, dependencies, permissions, data boundary, health check, evidence, degradation, uninstall, and rollback.
+When an Agent or Skill must connect to an AI Harness or run as a host plugin, define a provider-neutral plugin contract and reserve a host-compatible **MCP, CLI, or plugin entry point**. The manifest or adapter record must declare entry, version, host compatibility, capabilities, dependencies, permissions, data boundary, health check, evidence, degradation, uninstall, and rollback. The foundation reserves this interface only; upward MCP service registration, planning, installation, removal, and rollback belong to the dedicated [`sayelf-mcp-bridge`](https://github.com/chuanxituzhu-lab/sayelf-mcp-bridge) Skill.
 
 MCP is appropriate when multiple backends need a common tool/resource protocol; CLI is appropriate as a stable local or subprocess bridge; a host plugin entry is appropriate when the Harness owns lifecycle and discovery. None of these surfaces authorizes itself or may widen tools, persistence, telemetry, network egress, or data scope. Every call remains inside `PRE CHECK → EXECUTE → POST CHECK`, with fail-closed behavior when the host or adapter is unavailable.
 
@@ -171,11 +171,11 @@ The decision record must state the local insufficiency reason, quality/latency/c
 
 ### 13 — Multi-Harness and Shared Host Capability
 
-When an Agent or Skill connects to two or more Harnesses, or reuses host-provided models, tools, Agents, sessions, sandboxes, caches, memory, approvals, policies, schedulers, usage accounting, or tracing, keep the Core provider-neutral and declare a host adapter matrix. Each host entry records entry point, version, capabilities, permissions and scope, data boundary, lifecycle, pause/resume/cancel, health, evidence, degradation, and rollback. Reuse shared host capability before building a duplicate. Keep platform differences in adapters; incompatible adapters or unknown boundaries are `BLOCKED` / `DEGRADED`.
+When an Agent or Skill connects to two or more Harnesses, or reuses host-provided capabilities, keep the Core provider-neutral and declare a host adapter matrix. Each host entry records entry point, version, capabilities, permissions and scope, data boundary, lifecycle, pause/resume/cancel, health, evidence, degradation, and rollback. This is a contract and routing boundary only; actual host registration is delegated to `sayelf-mcp-bridge` or another explicitly selected adapter Skill. Reuse shared host capability before building a duplicate; incompatible adapters or unknown boundaries are `BLOCKED` / `DEGRADED`.
 
 ### 14 — Optional Model Self-Run
 
-Enable a bundled/local model or independent inference loop only when the shared host model is unavailable, or when evidence shows a benefit in local control, data sovereignty, latency, cost, or reliability. Declare model/runtime/version, maximum turns/tokens/time/cost, tools and minimum permissions, data boundary, Session/Memory, human approval, stop/cancel/pause/resume conditions, evidence, fallback, and rollback. If capability, authorization, budget, stop conditions, or evidence are missing, return `UNAVAILABLE` / `BLOCKED` / `CLARIFY`; never claim autonomous operation or start an unbounded loop.
+Enable a bundled/local model or independent inference loop only when the shared host model is unavailable, or when evidence shows a benefit in local control, data sovereignty, latency, cost, or reliability. The foundation defines the boundary only; model execution is routed through `sayelf-llm-gateway` or another explicitly selected model Skill. Declare model/runtime/version, maximum turns/tokens/time/cost, tools and minimum permissions, data boundary, Session/Memory, human approval, stop/cancel/pause/resume conditions, evidence, fallback, and rollback. If capability, authorization, budget, stop conditions, or evidence are missing, return `UNAVAILABLE` / `BLOCKED` / `CLARIFY`; never claim autonomous operation or start an unbounded loop.
 
 ## Simple-first constraint
 

@@ -124,7 +124,7 @@ FDE 项目遵循"**进场 → 立项 → 交付 → 放大**"四阶段流程：
 
 ### 4.2 插件化封装（Agent Plugins 1.0.0）
 
-插件是共享能力的可选部署适配器，不是所有 Skill 的强制形态。插件、API、MCP/连接器、CLI 或 Agent Endpoint 均须遵守 `references/shared-capability-contract.md`：稳定能力身份与版本、最小权限、数据边界、健康/兼容、证据、降级和回滚。多平台 Harness 使用 host adapter matrix 保持核心语义一致，优先复用共享宿主能力；可选自运行模型必须声明 runtime、预算、停止/取消、批准、证据和回退，不能绕过 Tool Guardrail。CLI 还必须具备结构化 stdin/stdout、固定退出码、超时/取消和安全凭证注入。宿主所需的 `plugin.json`、`mcp.json` 或其它清单只负责翻译安装/调用信息，不能把供应商专属循环、SDK 或控制面渗入核心。
+插件是共享能力的可选部署适配器，不是所有 Skill 的强制形态。插件、API、MCP/连接器、CLI 或 Agent Endpoint 均须遵守 `references/shared-capability-contract.md`：稳定能力身份与版本、最小权限、数据边界、健康/兼容、证据、降级和回滚。多平台 Harness 只在底座登记 host adapter matrix 和接口，实际向上登记/安装/撤销路由到 `sayelf-mcp-bridge`；向下模型调用路由到 `sayelf-llm-gateway`。可选自运行模型必须声明 runtime、预算、停止/取消、批准、证据和回退，不能绕过 Tool Guardrail。CLI 还必须具备结构化 stdin/stdout、固定退出码、超时/取消和安全凭证注入。宿主所需的 `plugin.json`、`mcp.json` 或其它清单只负责翻译安装/调用信息，不能把供应商专属循环、SDK 或控制面渗入核心。
 
 #### 标准插件目录结构
 
@@ -401,7 +401,7 @@ allowed-tools: [Read, Write, Bash]
 
 ### 8.2 跨 Harness 兼容性
 
-跨平台接入采用宿主适配矩阵：逐一登记入口、版本、能力、权限、数据边界、生命周期、暂停/恢复/取消、健康、证据、降级和回滚；同一 Skill 的核心语义与验收不随 Harness 复制。共享宿主能力优先复用，平台差异只留在适配器；兼容性或授权边界未知时必须 `BLOCKED` / `DEGRADED`。
+跨平台接入采用宿主适配矩阵：底座逐一登记入口、版本、能力、权限、数据边界、生命周期、暂停/恢复/取消、健康、证据、降级和回滚，但不直接写入宿主配置。实际 MCP 服务登记、计划、安装、撤销和回滚交给 `sayelf-mcp-bridge`；同一 Skill 的核心语义与验收不随 Harness 复制。共享宿主能力优先复用，平台差异只留在适配器；兼容性或授权边界未知时必须 `BLOCKED` / `DEGRADED`。
 
 | Harness 平台 | 兼容方式 |
 |-------------|---------|

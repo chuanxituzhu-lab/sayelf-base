@@ -1,6 +1,6 @@
 # 共享能力与 API / MCP / CLI / 插件化契约
 
-> `sayelf-base` v1.1.3 的 L3 参考。用于把共用 AI 平台、Agent、模型、工具、记忆、审批、评测或其它可复用能力接入多个 Harness。本文定义语义与安全契约，不绑定具体供应商、SDK、协议或托管平台。
+> `sayelf-base` v1.1.4 的 L3 参考。用于定义共用 AI 平台、Agent、模型、工具、记忆、审批、评测或其它可复用能力的接口契约；实际向上 Harness 接入由 `sayelf-mcp-bridge` 等专门 Skill 承担，向下模型接入由 `sayelf-llm-gateway` 等专门 Skill 承担。本文不绑定具体供应商、SDK、协议或托管平台。
 
 ## 1. 目标与非目标
 
@@ -79,11 +79,17 @@ execution:
   model_runtime: "model/runtime/adapter when self-run is selected"
   budget: "turn/token/time/cost limits"
   stop_conditions: []
+routing:
+  direction: upward_harness | downward_model | neutral
+  adapter_owner: sayelf-mcp-bridge | sayelf-llm-gateway | named-adapter-skill | local | none
+  interface_only: true
 ```
 
 `Unknown` 不是可默认放行的等级。未知的权限、作用域、输入/输出分类、留存、兼容性或结果证据，按 fail-closed 处理。
 
-### 3.1 多平台 Harness 与共享宿主能力
+### 3.1 接口预留与专门 Skill 路由
+
+`sayelf-base` 只拥有语义契约、权限/数据边界、证据、回退和 Convergence 要求，不拥有具体平台注册器或模型客户端实现。向上接入多个 Agent/Harness 时，路由到 [`sayelf-mcp-bridge`](https://github.com/chuanxituzhu-lab/sayelf-mcp-bridge) 或其它明确的 Harness 适配 Skill；向下调用大模型时，路由到 [`sayelf-llm-gateway`](https://github.com/chuanxituzhu-lab/sayelf-llm-gateway) 或其它明确的模型适配 Skill。专门 Skill 不可用、未授权、版本不兼容或证据不足时，返回 `UNAVAILABLE` / `BLOCKED` / `CLARIFY`，不得在底座内临时复制实现。
 
 同一 Agent/Skill 接入多个 Harness 时，核心语义、输入输出、权限、数据边界、验收和证据结构保持一致；按宿主适配矩阵登记入口、版本、能力、权限与作用域、数据边界、生命周期、暂停/恢复/取消、健康、降级和回滚。共享宿主能力优先复用，平台差异只留在适配器；不兼容或边界未知时返回 `BLOCKED` / `DEGRADED`。
 

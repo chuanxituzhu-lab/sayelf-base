@@ -140,12 +140,12 @@
     "category": "底座原则 · 多平台 Harness/共享宿主/自运行",
     "type": "golden",
     "input": {
-      "request": "让一个 Agent/Skill 同时接入多个 Harness，优先复用宿主模型与工具；宿主模型不可用时才允许自带模型自主运行",
+      "request": "底座只预留接口：Agent/Skill 向上接入多个 Harness 由 sayelf-mcp-bridge 负责，向下接入大模型由 sayelf-llm-gateway 负责；宿主模型不可用时才允许有边界的自运行",
       "evidence": "各 Harness 入口/版本/能力/权限/数据边界可记录，自运行预算与停止条件已定义"
     },
-    "expected_output_keywords": ["P13", "多平台 Harness", "共享宿主能力", "适配矩阵", "P14", "可选", "预算", "停止条件", "UNAVAILABLE"],
-    "required_steps": ["能力发现", "授权", "回退"],
-    "ground_truth": "P13 以 host adapter matrix 保持跨 Harness 语义一致并优先复用共享宿主能力；P14 仅在宿主模型不可用或有证据收益时启用自运行，必须有预算、停止条件、证据和回退，不满足时 UNAVAILABLE/BLOCKED",
+    "expected_output_keywords": ["P13", "多平台 Harness", "共享宿主能力", "适配矩阵", "接口预留", "sayelf-mcp-bridge", "sayelf-llm-gateway", "P14", "可选", "预算", "停止条件", "UNAVAILABLE"],
+    "required_steps": ["能力发现", "授权", "路由", "回退"],
+    "ground_truth": "P13 只在底座声明跨 Harness 的 host adapter matrix 与共享宿主接口，向上路由 sayelf-mcp-bridge，不复制宿主登记实现；模型向下路由 sayelf-llm-gateway。P14 只声明自运行边界，必须有预算、停止条件、证据和回退，不满足时 UNAVAILABLE/BLOCKED",
     "constraints": {"tone": "结构化", "max_length": 1400}
   }
 ]
